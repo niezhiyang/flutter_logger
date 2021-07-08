@@ -8,10 +8,10 @@ void main() {
     var json2 = "{\"data\":[{\"name\":\"张三\",\"age\":18},{\"name\":\"李四\",\"age\":20},{\"name\":\"王五\",\"age\":10}]}";
 
     Logger.d("object");
-    Logger.v("object");
-    Logger.d("object",tag:"tag");
-    // Logger.json(json1);
-    Logger.json(json2);
+    // Logger.v("object");
+    // Logger.d("object",tag:"tag");
+    // // Logger.json(json1);
+    // Logger.json(json2);
 
   });
 }

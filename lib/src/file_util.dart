@@ -3,20 +3,22 @@ import 'dart:convert';
 import '../flutter_logger.dart';
 
 class FileUtil {
-  /// 拿到当前文件名字
-  static String getFile({bool isJson = false}) {
-    String traceString = StackTrace.current.toString();
-    RegExpMatch? curMatch = RegExp(r'[A-Za-z_]+.dart').firstMatch(traceString);
-    Iterable<RegExpMatch> allMatch =
-        RegExp(r'[A-Za-z_]+.dart').allMatches(traceString);
-    String? fileName = "";
-    if (curMatch != null) {
-      List<RegExpMatch> stacks = allMatch
-          .where((element) => element.group(0) != curMatch.group(0))
-          .toList();
-      fileName = stacks[3].group(0);
+  /// 拿到当前文件名字 和 行号
+  static String getFileInfo() {
+    String fileStr = "";
+    try {
+      String traceString = StackTrace.current.toString().split("\n")[4];
+      int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_]+.dart'));
+      String fileInfo = traceString.substring(indexOfFileName);
+      List<String> listOfInfos = fileInfo.split(":");
+      String fileName = listOfInfos[0];
+      String lineNumber = listOfInfos[1];
+      fileStr = "[$fileName, $lineNumber]";
+    } catch (e) {
+      // NoThing
     }
-    return fileName?.split(".")[0] ?? "";
+
+    return fileStr;
   }
 
   ///json字符串格式化

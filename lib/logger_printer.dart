@@ -64,7 +64,7 @@ class LoggerPrinter extends Printer {
     String message = object.toString();
     AnsiPen pen = getAnsiPen(level);
 
-    String fileName = FileUtil.getFile(isJson: isJson);
+    String fileName = FileUtil.getFileInfo();
 
     String prefix =
         "${getLevelFirst(level)}${Logger.isShowFile ? fileName : ""} : ${tag ?? ""}";
