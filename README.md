@@ -2,7 +2,7 @@
 
 Simple, pretty and powerful logger for flutter
 
-## use
+## Usage
 
 ```
 Logger.d("hello");
@@ -10,8 +10,6 @@ Logger.d("hello");
 
 ## Output
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+![](https://github.com/niezhiyang/flutter_logger/blob/master/art/1625751834730.jpg)
 
-## Usage
 
