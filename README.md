@@ -1,6 +1,6 @@
 # flutter_logger
 
-Simple, pretty and powerful logger for flutter
+Simple, pretty and powerful logger for flutter，It has the log level, file name and line number, and can customize the color of the log level
 
 ## Usage
 
