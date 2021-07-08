@@ -14,7 +14,7 @@ class FileUtil {
       List<RegExpMatch> stacks = allMatch
           .where((element) => element.group(0) != curMatch.group(0))
           .toList();
-      fileName = stacks[isJson ? 4 : 3].group(0);
+      fileName = stacks[3].group(0);
     }
     return fileName?.split(".")[0] ?? "";
   }

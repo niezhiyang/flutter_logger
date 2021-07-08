@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_logger/flutter_logger.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +33,13 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
-
+    Logger.v("hello world");
+    Logger.d("hello world");
+    Logger.i("hello world");
+    Logger.w("hello world");
+    Logger.e("hello world");
+    var json = "{\"name\":\"tom\",\"age\":\"18\"}";
+    Logger.json(json);
   }
 
   @override

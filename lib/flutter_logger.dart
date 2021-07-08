@@ -10,7 +10,7 @@ class Logger {
   /// 日志中是否含有文件名字，去掉了 .dart 后缀名
   static bool isShowFile = true;
 
-  static int levelVerbose = 239;
+  static int levelVerbose = 247;
   static int levelDebug = 26;
   static int levelInfo = 28;
   static int levelWarn = 3;

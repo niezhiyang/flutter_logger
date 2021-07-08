@@ -50,7 +50,7 @@ class LoggerPrinter extends Printer {
   @override
   void json(String? json, {String? tag}) {
     if (json != null) {
-      log(_debug, FileUtil.jsonFormat(json), tag, isJson: true);
+      log(_debug, FileUtil.jsonFormat(json), tag);
     }
   }
 
