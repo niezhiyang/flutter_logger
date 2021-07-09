@@ -10,6 +10,7 @@ class Logger {
   /// 日志中是否含有文件名字，去掉了 .dart 后缀名
   static bool isShowFile = true;
 
+  /// 日志级别颜色配置
   static int levelVerbose = 247;
   static int levelDebug = 26;
   static int levelInfo = 28;
@@ -54,6 +55,7 @@ class Logger {
     _printer.e(object, tag: tag);
   }
 
+  /// 打印json
   static void json(String? json, {String? tag}) {
     _printer.json(json, tag: tag);
   }
