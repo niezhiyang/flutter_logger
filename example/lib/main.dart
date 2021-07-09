@@ -37,7 +37,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Logger.d("hello world");
     Logger.i("hello world");
     Logger.w("hello world");
-    Logger.e("hello world");
+    Logger.e("hello world",tag:"TAG");
     var json = "{\"name\":\"tom\",\"age\":\"18\"}";
     Logger.json(json);
   }
