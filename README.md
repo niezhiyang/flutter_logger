@@ -2,7 +2,14 @@
 
 Simple, pretty and powerful logger for flutter，It has the log level, file name and line number, and can customize the color of the log level，It was inspired by [logger](https://github.com/orhanobut/logger)
 
+## Download
+
+```
+flutter_easylogger: ^1.0.2
+```
+
 ## Usage
+
 
 ```
 Logger.d("hello");
