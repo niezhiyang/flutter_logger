@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:flutter_easylogger/flutter_easylogger.dart';
 
 void main() {
   test('adds one to input values', () {
@@ -10,6 +11,5 @@ void main() {
     // Logger.d("object",tag:"tag");
     // // Logger.json(json1);
     // Logger.json(json2);
-
   });
 }

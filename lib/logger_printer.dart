@@ -1,7 +1,7 @@
-import 'package:flutter_logger/src/ansicolor.dart';
 
 import 'flutter_logger.dart';
 import 'printer.dart';
+import 'src/ansicolor.dart';
 import 'src/file_util.dart';
 
 class LoggerPrinter extends Printer {
