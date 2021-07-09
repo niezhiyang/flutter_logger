@@ -35,8 +35,8 @@ Logger.json(json);
 ```
 
 ## Advanced 
-You can change the color of level, and the value is in the range of 0-255. Please refer to the picture below for details
-![](https://github.com/niezhiyang/flutter_logger/blob/master/art/colors.jpg)
+You can change the color of level, and the value is in the range of 0-255. Please refer to the picture below for details<br>
+![](https://github.com/niezhiyang/flutter_logger/blob/master/art/colors.png)
 ```
 Logger.levelVerbose = 247;
 Logger.levelDebug = 26;
