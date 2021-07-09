@@ -1,7 +1,6 @@
 name: flutter_logger
 description: Simple, pretty and powerful logger for flutter.
 version: 1.0.1
-author: niezhiyang <745062747@qq.com>
 homepage: https://github.com/niezhiyang/flutter_logger
 
 environment:

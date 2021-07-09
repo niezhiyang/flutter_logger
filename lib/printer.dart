@@ -1,5 +1,3 @@
-import 'package:flutter_logger/flutter_logger.dart';
-import 'package:flutter_logger/src/file_util.dart';
 
 abstract class Printer {
 
