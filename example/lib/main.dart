@@ -40,6 +40,13 @@ class _MyHomePageState extends State<MyHomePage> {
     Logger.e("hello world",tag:"TAG");
     var json = "{\"name\":\"tom\",\"age\":\"18\"}";
     Logger.json(json);
+
+    Logger.levelVerbose = 247;
+    Logger.levelDebug = 26;
+    Logger.levelInfo = 28;
+    Logger.levelWarn = 3;
+    Logger.levelError = 9;
+    Logger.enable = false;
   }
 
   @override

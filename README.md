@@ -24,6 +24,29 @@ var json = "{\"name\":\"tom\",\"age\":\"18\"}";
 Logger.json(json);
 ```
 with tag
+```
+Logger.d("hello",tag:"TAG");
+```
+![](https://github.com/niezhiyang/flutter_logger/blob/master/art/tag.jpg)
 
+Json  support (output will be in debug level)
+```
+Logger.json(json);
+```
 
+## Advanced 
+You can change the color of level, and the value is in the range of 0-255. Please refer to the picture below for details
+![](https://github.com/niezhiyang/flutter_logger/blob/master/art/colors.jpg)
+```
+Logger.levelVerbose = 247;
+Logger.levelDebug = 26;
+Logger.levelInfo = 28;
+Logger.levelWarn = 3;
+Logger.levelError = 9;
+```
 
+## Note
+Turn off logging when production
+```
+Logger.enable = false;
+```
