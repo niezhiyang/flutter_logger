@@ -5,7 +5,7 @@ Simple, pretty and powerful logger for flutter，It has the log level, file name
 ## Download
 
 ```
-flutter_easylogger: ^1.0.2
+flutter_easylogger: ^1.0.3
 ```
 
 ## Usage
