@@ -1,28 +1,27 @@
-Language: English | [中文简体]()
+语言: [English]() | [中文简体]()
 
 # flutter_logger
 
-Simple, pretty and powerful logger for flutter，It has the log level, file name and line number, and can customize the color of the log level，It was inspired by [logger](https://github.com/orhanobut/logger)
-
-## Download
+在flutter中，简单，漂亮，功能强大的日志打印工具，带有文件名字以及行号，并且可以定制自己的打印日志级别的颜色
+## 版本
 
 ```
 flutter_easylogger: ^{LAST_VERSION}
 ```
 
-## Usage
+## 简单实用
 
 
 ```
 Logger.d("hello");
 ```
 
-## Output
+## 打印出来的结果
 
 ![](https://github.com/niezhiyang/flutter_logger/blob/master/art/1625751834730.jpg)
 
-## Options
-no tag 
+## 更多的实用
+下面是没有带tag的
 ```
 Logger.v("hello world");
 Logger.d("hello world");
@@ -32,18 +31,20 @@ Logger.e("hello world");
 var json = "{\"name\":\"tom\",\"age\":\"18\"}";
 Logger.json(json);
 ```
-with tag
+下面是有tag的
 ```
 Logger.d("hello",tag:"TAG");
 ```
 ![](https://github.com/niezhiyang/flutter_logger/blob/master/art/tag.jpg)
 
 Json  support (output will be in debug level)
+也支持json的打印(json的打印默认是d级别)
 ```
 Logger.json(json);
 ```
 
-## Advanced 
+## 更多用法 
+你可以定制打印级别的日志颜色，范围是0-255，具体的颜色值参考下面的图片
 ```
 Logger.levelVerbose = 247;
 Logger.levelDebug = 26;
@@ -51,12 +52,11 @@ Logger.levelInfo = 28;
 Logger.levelWarn = 3;
 Logger.levelError = 9;
 ```
-You can change the color of level, and the value is in the range of 0-255. Please refer to the picture below for details<br>
 ![](https://github.com/niezhiyang/flutter_logger/blob/master/art/colors.png)
 
 
-## Note
-Turn off logging when production
+## 注意
+当在生产环境，请关闭打印
 ```
 Logger.enable = false;
 ```
