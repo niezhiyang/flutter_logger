@@ -1,8 +1,8 @@
-语言: [English]() | [中文简体]()
+语言: [English](https://github.com/niezhiyang/flutter_logger/blob/master/README.md) | 中文简体]
 
 # flutter_logger
 
-在flutter中，简单，漂亮，功能强大的日志打印工具，带有文件名字以及行号，并且可以定制自己的打印日志级别的颜色
+在flutter中，简单，漂亮，功能强大的日志打印工具，带有文件名字以及行号，并且可以定制自己的打印日志级别的颜色，按照android中的 [logger](https://github.com/orhanobut/logger) 设计的
 ## 版本
 
 ```
