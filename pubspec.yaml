@@ -1,6 +1,6 @@
 name: flutter_easylogger
 description: Simple, pretty and powerful logger for flutter.
-version: 1.0.4
+version: 2.0.1
 homepage: https://github.com/niezhiyang/flutter_logger
 
 environment:
@@ -14,7 +14,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^1.0.0
+  flutter_lints: ^1.0.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
