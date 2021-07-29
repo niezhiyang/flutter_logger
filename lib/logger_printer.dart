@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'flutter_logger.dart';
 import 'printer.dart';
 import 'src/ansicolor.dart';
@@ -70,6 +72,9 @@ class LoggerPrinter extends Printer {
         "${getLevelFirst(level)}${Logger.isShowFile ? fileName : ""} : ${tag ?? ""}";
 
     // 绘制开始时上边的分割线
+    if (!Platform.isAndroid){
+      ansiColorDisabled =true;
+    }
     print("${pen.call("$prefix $_topBorder")}");
 
     // 处理有换行符的，比如说json

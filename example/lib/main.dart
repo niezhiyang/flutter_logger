@@ -28,15 +28,18 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Logger.e("hello world", tag: "TAG");
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       home: Scaffold(
-        body: TextButton(
-          onPressed: onPressed,
-          child: Text("点我"),
+        body: Center(
+          child: MaterialButton(
+            onPressed: onPressed,
+            child: Text("点我"),
+          ),
         ),
       ),
     );

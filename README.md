@@ -3,7 +3,7 @@ Language: English | [中文简体](https://github.com/niezhiyang/flutter_logger/
 # flutter_logger
 
 Simple, pretty and powerful logger for flutter，It has the log level, file name and line number, and can customize the color of the log level，It was inspired by [logger](https://github.com/orhanobut/logger)
-
+，Color not supported on ios，
 ## Download
 
 ```
