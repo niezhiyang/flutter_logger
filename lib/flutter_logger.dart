@@ -17,6 +17,7 @@ class Logger {
   static int levelWarn = 3;
   static int levelError = 9;
 
+
   /// 设置是否控制打印
   static set enable(bool enable) {
     _enable = enable;
