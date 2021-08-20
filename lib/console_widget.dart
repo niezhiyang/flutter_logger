@@ -14,6 +14,9 @@ class ConsoleWidget extends StatefulWidget {
 }
 
 class _ConsoleWidgetState extends State<ConsoleWidget> {
+
+  late ScrollController _controller ;
+  late TextSelectionControls _selectionControl ;
   static const int _levelDefault = -1;
 
   int _logLevel = _levelDefault;
@@ -25,6 +28,17 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   final double _mangerSize = 40;
 
+  @override
+  void initState() {
+    _controller = ScrollController();
+    _selectionControl = MaterialTextSelectionControls();
+    super.initState();
+  }
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
@@ -39,7 +53,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
               valueListenable: notifier,
               builder:
                   (BuildContext context, LogModeValue model, Widget? child) {
-                return _getChild(model);
+                return _buildLogWidget(model);
               },
             ),
           ),
@@ -77,7 +91,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
     });
   }
 
-  Widget _getChild(LogModeValue model) {
+  Widget _buildLogWidget(LogModeValue model) {
     List<TextSpan> spanList = [];
     List<LogMode> modeList = model.logModeList;
     for (int i = modeList.length - 1; i >= 0; i--) {
@@ -102,15 +116,17 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
     }
 
     return Scrollbar(
+      controller: _controller,
+      scrollbarOrientation: ScrollbarOrientation.bottom,
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SelectableText.rich(
-            TextSpan(
-              children: spanList,
-            ),
+        padding: const EdgeInsets.all(8.0),
+        primary:false,
+        child: SelectableText.rich(
+          TextSpan(
+            children: spanList,
           ),
+          selectionControls:_selectionControl,
         ),
       ),
     );

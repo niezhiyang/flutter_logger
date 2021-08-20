@@ -21,7 +21,9 @@ class LoggerPrinter extends Printer {
   static const String _topRight = '┐';
   static const String _bottomRight = '┘';
   static const String _verticalLine = '│';
-  static const String _verticalLineIos = '|';
+  // static const String _verticalLineIos = '▕ ';
+  static const String _verticalLineIos = '｜';
+  // static const String _verticalLineIos = ' │';
   static const String _divider =
       "────────────────────────────────────────────────────────";
   static const String _topBorder = "$_topLeft$_divider$_divider$_topRight";
@@ -93,7 +95,7 @@ class LoggerPrinter extends Printer {
       print("${pen.call("$prefix $_verticalLine $element")}");
       if (Platform.isIOS) {
         //主要是运行在手机上的 日志， 因为运行在ios上会有不等宽的字符，随意加宽一个空格，
-        logMessage.write("$prefix  $_verticalLineIos $element\n");
+        logMessage.write("$prefix $_verticalLineIos $element\n");
       }else{
         logMessage.write("$prefix $_verticalLine $element\n");
       }
