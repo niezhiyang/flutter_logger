@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
     Logger.i("hello world");
     Logger.w("hello world");
     Logger.e("hello world", tag: "TAG");
-    var json = "{\"name\":\"tom\",\"age\":\"18\"}";
+    var json = "{\"name\":\"tom\",\"age\":\"38\",\"son\":{\"name\":\"jerry\",\"age\":\"18\",\"grandson\":{\"name\":\"lily\",\"age\":\"8\"}}}";
     Logger.json(json);
 
     // Logger.levelVerbose = 247;

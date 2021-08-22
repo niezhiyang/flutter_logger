@@ -107,11 +107,12 @@ class FileUtil {
     return buffer.toString();
   }
 
-  ///获取缩进空白符
+  ///获取缩进空白符　不能用\t , \t 虽然在android stuido 上可以，但是在安卓和ios上行不通
   static String getDeepSpace(int deep) {
     var tab = StringBuffer();
     for (int i = 0; i < deep; i++) {
-      tab.write("\t");
+      tab.write("　");
+      // tab.write("\t");
     }
     return tab.toString();
   }

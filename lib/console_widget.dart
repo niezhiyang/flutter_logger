@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easylogger/flutter_logger.dart';
 import 'package:flutter_easylogger/logger_printer.dart';
 
 import 'src/console_util.dart';
@@ -14,10 +13,14 @@ class ConsoleWidget extends StatefulWidget {
 }
 
 class _ConsoleWidgetState extends State<ConsoleWidget> {
+  late ScrollController _controller;
 
-  late ScrollController _controller ;
-  late TextSelectionControls _selectionControl ;
+  late TextSelectionControls _selectionControl;
+
+  late TextEditingController _textController;
   static const int _levelDefault = -1;
+
+  String _filterStr = "";
 
   int _logLevel = _levelDefault;
   bool _isLarge = false;
@@ -26,19 +29,23 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   // final Color _curreetLeveColor = ConsoleUtil.getLevelColor(_logLevel);
 
-  final double _mangerSize = 40;
+  final double _mangerSize = 50;
 
   @override
   void initState() {
     _controller = ScrollController();
     _selectionControl = MaterialTextSelectionControls();
+    _textController = TextEditingController();
     super.initState();
   }
+
   @override
   void dispose() {
     _controller.dispose();
+    _textController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
@@ -75,8 +82,9 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
                   _levelName,
                   style: TextStyle(color: ConsoleUtil.getLevelColor(_logLevel)),
                 ),
-                const Expanded(
-                  child: Text(""),
+                const SizedBox(width: 5,),
+                Expanded(
+                  child: _buildTextFiled(),
                 ),
                 IconButton(
                   onPressed: _changeSize,
@@ -99,9 +107,11 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
       TextStyle _logStyle = TextStyle(
           color: ConsoleUtil.getLevelColor(logMode.level),
           fontSize: 15,
+          // fontFamily: 'monospace',
           decoration: TextDecoration.none,
           fontWeight: FontWeight.w400);
 
+      // TextStyle _logStyle =GoogleFonts.oxygenMono(color: ConsoleUtil.getLevelColor(logMode.level),);
       TextSpan span = TextSpan(
         children: [
           TextSpan(
@@ -110,18 +120,20 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
           ),
         ],
       );
-      if (_logLevel == logMode.level || _logLevel == _levelDefault) {
+      // 过滤日志
+      if ((_logLevel == logMode.level || _logLevel == _levelDefault)&& logMode.logMessage!=null && logMode.logMessage!.contains(_filterStr)) {
         spanList.add(span);
       }
     }
 
     return Scrollbar(
-      controller: _controller,
+      // controller: _controller,
       scrollbarOrientation: ScrollbarOrientation.bottom,
+
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.all(8.0),
-        primary:false,
+        primary:true,
         child: SelectableText.rich(
           TextSpan(
             children: spanList,
@@ -248,5 +260,41 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
         _levelName = "error";
         break;
     }
+  }
+
+  Widget _buildTextFiled() {
+   return Container(
+     margin: const EdgeInsets.all(5),
+     padding: EdgeInsets.only(left: 15),
+     decoration: BoxDecoration(
+       color: Colors.white,
+       borderRadius: BorderRadius.circular(20),
+     ),
+     child: TextField(
+       autofocus:false ,
+        controller: _textController,
+        onChanged: (value){
+          _filterText(value);
+        },
+        textInputAction: TextInputAction.done,
+        decoration: InputDecoration(
+          hintText: "过滤日志",
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: () {
+              _textController.clear();
+              _filterText("");
+            },
+          ),
+          border: InputBorder.none,
+        ),
+      ),
+   );
+  }
+
+  void _filterText(String value) {
+    setState(() {
+      _filterStr = value;
+    });
   }
 }
