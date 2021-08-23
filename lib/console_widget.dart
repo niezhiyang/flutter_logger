@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easylogger/logger_printer.dart';
 
+import 'flutter_logger.dart';
 import 'src/console_util.dart';
 import 'src/log_mode.dart';
 
@@ -36,7 +37,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   final GlobalKey _globalForDrag = GlobalKey();
 
   double _currendDy = 0;
-  double _mostEndDy = 0;
+  // double _mostEndDy = 0;
 
   @override
   void initState() {
@@ -49,9 +50,13 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
           _globalKey.currentContext?.findRenderObject() as RenderBox;
       _currendDy = renderObject.localToGlobal(Offset.zero).dy;
 
-      _mostEndDy = MediaQuery.of(context).size.height -
-          context.size!.height -
-          renderObject.localToGlobal(Offset.zero).dy;
+      // _mostEndDy = MediaQuery.of(context).size.height - context.size!.height - renderObject.localToGlobal(Offset.zero).dy;
+      //
+      // if(_mostEndDy<=0){
+      //   _mostEndDy = 0;
+      // }
+      // print("${MediaQuery.of(context).size.height}       ${context.size!.height}   ${renderObject.localToGlobal(Offset.zero).dy}");
+
     });
 
     super.initState();
@@ -71,35 +76,47 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   Widget _buildDraggable() {
     return LayoutBuilder(builder: (context, constraints) {
+      if(_marginTop<=0){
+        _marginTop = 0;
+      }
       return Container(
         key: _globalKey,
         margin: EdgeInsets.only(top: _marginTop),
         child: Draggable(
           axis: Axis.vertical,
           child: _buildDragView(constraints),
-          // 因为当软件盘打开的时候，并且是展开的时候，移动会有问题，但是Draggable又不支持不移动，所以做的下面这个
-          feedback: _isLarge ? Container() : _buildDragView(constraints),
-          // 因为当软件盘打开的时候，并且是展开的时候，移动会有问题，但是Draggable又不支持不移动，所以做的下面这个
-          childWhenDragging: _isLarge ? _buildDragView(constraints) : Container(),
+          // _isLarge 的状态下，不准拖动
+          feedback:  _isLarge? Container():_buildDragView(constraints),
+          childWhenDragging: _isLarge? _buildDragView(constraints):Container(),
           onDragEnd: (DraggableDetails details) {
-            if (!_isLarge) {
-              setState(() {
-                _closeKeyBoard();
-                double offY = 0;
-                if (details.offset.dy - _currendDy < 0) {
-                  offY = 0;
-                } else if (details.offset.dy - _currendDy > _mostEndDy) {
-                  offY = _mostEndDy;
-                } else {
-                  offY = details.offset.dy - _currendDy;
-                }
-                _marginTop = offY;
-              });
-            }
+            _calculatePosition(details);
           },
         ),
       );
     });
+  }
+
+  /// 计算位置
+  void _calculatePosition(DraggableDetails details) {
+    if (!_isLarge) {
+      if (mounted) {
+        setState(() {
+          _closeKeyBoard();
+          double offY = 0;
+          if ((details.offset.dy - _currendDy) < 0) {
+            offY = 0;
+          }
+          // else if ((details.offset.dy - _currendDy) > _mostEndDy) {
+          //   print("----1111-----${details.offset.dy}   ${_currendDy}  ${details.offset.dy-_currendDy}    ${_mostEndDy}");
+          //   offY = _mostEndDy;
+          // }
+          else {
+            offY = details.offset.dy - _currendDy;
+          }
+          _marginTop = offY;
+        });
+      }
+    }
   }
 
   Widget _buildDragView(BoxConstraints constraints) {
@@ -121,7 +138,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
                 color: Colors.black,
                 width: constraints.maxWidth,
                 child: ValueListenableBuilder<LogModeValue>(
-                  valueListenable: notifier,
+                  valueListenable: Logger.notifier,
                   builder: (BuildContext context, LogModeValue model,
                       Widget? child) {
                     return _buildLogWidget(model);
@@ -218,7 +235,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   /// 清除日志
   void _clearLog() {
     _closeKeyBoard();
-    notifier.value = LogModeValue();
+    Logger.notifier.value = LogModeValue();
   }
 
   /// 过滤日志

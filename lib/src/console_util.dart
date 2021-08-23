@@ -4,7 +4,7 @@ import '../flutter_logger.dart';
 import '../logger_printer.dart';
 import 'log_mode.dart';
 
-LogValueNotifier notifier = LogValueNotifier();
+
 
 class ConsoleUtil {
   static Color getLevelColor(int? level) {

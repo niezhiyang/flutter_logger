@@ -50,7 +50,12 @@ class MyApp extends StatelessWidget {
           onPressed: onPressed,
           child: Icon(Icons.add),
         ),
-        body: ConsoleWidget(),
+        body: Column(
+          children: [
+            Container(width: 100,height: 100,color: Colors.red,),
+            Expanded(child:  ConsoleWidget(),)
+          ],
+        ),
       ),
     );
   }

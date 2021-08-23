@@ -107,7 +107,7 @@ class LoggerPrinter extends Printer {
     logMessage.write("$prefix $_bottomBorder");
 
     LogMode mode = LogMode(level: level,logMessage: logMessage.toString());
-    notifier.addLog(mode);
+    Logger.notifier.addLog(mode);
   }
 
   AnsiPen getAnsiPen(int level) {
