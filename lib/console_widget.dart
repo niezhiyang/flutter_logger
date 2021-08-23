@@ -13,7 +13,7 @@ class ConsoleWidget extends StatefulWidget {
   _ConsoleWidgetState createState() => _ConsoleWidgetState();
 }
 
-class _ConsoleWidgetState extends State<ConsoleWidget>{
+class _ConsoleWidgetState extends State<ConsoleWidget> {
   late ScrollController _controller;
 
   late TextSelectionControls _selectionControl;
@@ -33,6 +33,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
   final double _mangerSize = 50;
 
   final GlobalKey _globalKey = GlobalKey();
+  final GlobalKey _globalForDrag = GlobalKey();
 
   double _currendDy = 0;
   double _mostEndDy = 0;
@@ -53,11 +54,8 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
           renderObject.localToGlobal(Offset.zero).dy;
     });
 
-
     super.initState();
   }
-
-
 
   @override
   void dispose() {
@@ -79,12 +77,14 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
         child: Draggable(
           axis: Axis.vertical,
           child: _buildDragView(constraints),
-          feedback: _buildDragView(constraints),
-          childWhenDragging: Container(),
+          // 因为当软件盘打开的时候，并且是展开的时候，移动会有问题，但是Draggable又不支持不移动，所以做的下面这个
+          feedback: _isLarge ? Container() : _buildDragView(constraints),
+          // 因为当软件盘打开的时候，并且是展开的时候，移动会有问题，但是Draggable又不支持不移动，所以做的下面这个
+          childWhenDragging: _isLarge ? _buildDragView(constraints) : Container(),
           onDragEnd: (DraggableDetails details) {
             if (!_isLarge) {
-              SystemChannels.textInput.invokeMethod('TextInput.hide');
               setState(() {
+                _closeKeyBoard();
                 double offY = 0;
                 if (details.offset.dy - _currendDy < 0) {
                   offY = 0;
@@ -106,6 +106,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
     // 防止软键盘，导致溢出
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
+      key: _globalForDrag,
       child: Container(
         width: constraints.maxWidth,
         height: _isLarge
@@ -216,7 +217,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
 
   /// 清除日志
   void _clearLog() {
-    SystemChannels.textInput.invokeMethod('TextInput.hide');
+    _closeKeyBoard();
     notifier.value = LogModeValue();
   }
 
@@ -291,7 +292,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
   /// 过滤log
   void filterLog(BuildContext context, int level) {
     if (mounted) {
-      SystemChannels.textInput.invokeMethod('TextInput.hide');
+      _closeKeyBoard();
       setState(() {
         _logLevel = level;
         _setLevelName();
@@ -304,7 +305,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
   void _changeSize() {
     if (mounted) {
       setState(() {
-        SystemChannels.textInput.invokeMethod('TextInput.hide');
+        _closeKeyBoard();
         _isLarge = !_isLarge;
         // 如果是 大 的情况，直接让 top 设置为 0；
         if (_isLarge) {
@@ -369,9 +370,16 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
     );
   }
 
+  /// 过滤log
   void _filterText(String value) {
     setState(() {
       _filterStr = value;
     });
+  }
+
+  /// 关闭软键盘，并且取消焦点
+  void _closeKeyBoard() {
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
+    FocusManager.instance.primaryFocus?.unfocus();
   }
 }
