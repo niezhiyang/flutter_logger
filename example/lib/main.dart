@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
     Logger.i("hello world");
     Logger.w("hello world");
     Logger.e("hello world", tag: "TAG");
-    var json = "{\"name\":\"tom\",\"age\":\"38\",\"son\":{\"name\":\"jerry\",\"age\":\"18\",\"grandson\":{\"name\":\"lily\",\"age\":\"8\"}}}";
+    var json =
+        "{\"name\":\"tom\",\"age\":\"38\",\"son\":{\"name\":\"jerry\",\"age\":\"18\",\"grandson\":{\"name\":\"lily\",\"age\":\"8\"}}}";
     Logger.json(json);
 
     Logger.levelVerbose = 247;
@@ -24,26 +25,17 @@ class MyApp extends StatelessWidget {
     Logger.levelWarn = 3;
     Logger.levelError = 9;
 
-
-    // Logger.verboseColor = Colors.white54;
-    // Logger.debugColor = Colors.blue;
-    // Logger.infoColor = Colors.green;
-    // Logger.warnColor = Colors.yellow;
-    // Logger.errorColor = Colors.redAccent;
-   Logger.verboseColor = Colors.purpleAccent;
-    Logger.debugColor = Colors.purpleAccent;
-    Logger.infoColor = Colors.purpleAccent;
-    Logger.warnColor = Colors.purpleAccent;
-    Logger.errorColor = Colors.purpleAccent;
-
-
+    Logger.verboseColor = Colors.white54;
+    Logger.debugColor = Colors.blue;
+    Logger.infoColor = Colors.green;
+    Logger.warnColor = Colors.yellow;
+    Logger.errorColor = Colors.redAccent;
 
     // Logger.enable = false;
   }
 
   @override
   Widget build(BuildContext context) {
-
     Logger.e("hello world", tag: "TAG");
     return MaterialApp(
       title: 'Flutter Demo',

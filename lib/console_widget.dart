@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easylogger/logger_printer.dart';
 
 import 'src/console_util.dart';
@@ -82,6 +83,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
           childWhenDragging: Container(),
           onDragEnd: (DraggableDetails details) {
             if (!_isLarge) {
+              SystemChannels.textInput.invokeMethod('TextInput.hide');
               setState(() {
                 double offY = 0;
                 if (details.offset.dy - _currendDy < 0) {
@@ -214,6 +216,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
 
   /// 清除日志
   void _clearLog() {
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
     notifier.value = LogModeValue();
   }
 
@@ -288,6 +291,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
   /// 过滤log
   void filterLog(BuildContext context, int level) {
     if (mounted) {
+      SystemChannels.textInput.invokeMethod('TextInput.hide');
       setState(() {
         _logLevel = level;
         _setLevelName();
@@ -300,6 +304,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget>{
   void _changeSize() {
     if (mounted) {
       setState(() {
+        SystemChannels.textInput.invokeMethod('TextInput.hide');
         _isLarge = !_isLarge;
         // 如果是 大 的情况，直接让 top 设置为 0；
         if (_isLarge) {
