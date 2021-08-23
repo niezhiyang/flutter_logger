@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import '../flutter_logger.dart';
-import 'log_mode.dart';
+import '../log_mode.dart';
 
 class FileUtil {
   /// 拿到当前文件名字 和 行号

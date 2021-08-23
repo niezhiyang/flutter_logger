@@ -1,7 +1,7 @@
 
 import 'dart:io';
 
-import 'package:flutter_easylogger/src/log_mode.dart';
+import 'package:flutter_easylogger/log_mode.dart';
 
 import 'flutter_logger.dart';
 import 'printer.dart';

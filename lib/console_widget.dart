@@ -5,7 +5,7 @@ import 'package:flutter_easylogger/logger_printer.dart';
 
 import 'flutter_logger.dart';
 import 'src/console_util.dart';
-import 'src/log_mode.dart';
+import 'log_mode.dart';
 
 class ConsoleWidget extends StatefulWidget {
   ConsoleWidget({Key? key}) : super(key: key);

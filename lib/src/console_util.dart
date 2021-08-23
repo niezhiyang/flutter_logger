@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../flutter_logger.dart';
 import '../logger_printer.dart';
-import 'log_mode.dart';
+import '../log_mode.dart';
 
 
 

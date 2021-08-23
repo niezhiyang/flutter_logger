@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easylogger/console_widget.dart';
 import 'package:flutter_easylogger/flutter_logger.dart';
+import 'package:flutter_easylogger/log_mode.dart';
+import 'package:flutter_easylogger/logger_printer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,13 +32,15 @@ class MyApp extends StatelessWidget {
     Logger.infoColor = Colors.green;
     Logger.warnColor = Colors.yellow;
     Logger.errorColor = Colors.redAccent;
+    // 自己添加日志，打印到手机上的，比如说一些错误。
+    Logger.notifier
+        .addLog(LogMode(logMessage: "我是build错误", level: LoggerPrinter.error));
 
     // Logger.enable = false;
   }
 
   @override
   Widget build(BuildContext context) {
-    Logger.e("hello world", tag: "TAG");
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -52,8 +56,9 @@ class MyApp extends StatelessWidget {
         ),
         body: Column(
           children: [
-            Container(width: 100,height: 100,color: Colors.red,),
-            Expanded(child:  ConsoleWidget(),)
+            Expanded(
+              child: ConsoleWidget(),
+            )
           ],
         ),
       ),

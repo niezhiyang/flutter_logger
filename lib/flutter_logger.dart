@@ -4,7 +4,7 @@ import 'dart:ui';
 
 import 'logger_printer.dart';
 import 'printer.dart';
-import 'src/log_mode.dart';
+import 'log_mode.dart';
 
 class Logger {
  static LogValueNotifier notifier = LogValueNotifier();
