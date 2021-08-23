@@ -57,7 +57,8 @@ You can change the color of level, and the value is in the range of 0-255. Pleas
 
 ## print on the phone
 Logs can be printed on the phone or filtered by log level or keyword
-![](https://github.com/niezhiyang/flutter_logger/blob/master/art/logger_phone.gif)
+
+<img src="https://github.com/niezhiyang/flutter_logger/blob/master/art/logger_phone.gif" width="30%">
 ```dart
 Column(
   children: [

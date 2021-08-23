@@ -69,7 +69,7 @@ Column(
   ],
 ),
 ```
-![](https://github.com/niezhiyang/flutter_logger/blob/master/art/logger_phone.gif)
+<img src="https://github.com/niezhiyang/flutter_logger/blob/master/art/logger_phone.gif" width="30%">
 
 ## 定制手机上打印的日志颜色
 ```dart
