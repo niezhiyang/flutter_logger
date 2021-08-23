@@ -1,9 +1,14 @@
 library flutter_logger;
 
+import 'dart:ui';
+
 import 'logger_printer.dart';
 import 'printer.dart';
 
 class Logger {
+
+  Logger._getInstance();
+
   /// 控制是否打印
   static bool _enable = true;
 
@@ -16,6 +21,14 @@ class Logger {
   static int levelInfo = 28;
   static int levelWarn = 3;
   static int levelError = 9;
+
+
+  /// 因为 不知道 ansicolor 对应 16进制的具体颜色，所以单独 拿出来 专门针对 手机上的打印颜色
+  static Color? verboseColor;
+  static Color? debugColor;
+  static Color? infoColor;
+  static Color? warnColor;
+  static Color? errorColor;
 
 
   /// 设置是否控制打印

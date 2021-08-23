@@ -1,4 +1,3 @@
-import 'package:example/test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easylogger/console_widget.dart';
 import 'package:flutter_easylogger/flutter_logger.dart';
@@ -11,7 +10,6 @@ class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   void onPressed() {
-    Logger a = Logger();
     Logger.v("hello world");
     Logger.d("hello world");
     Logger.i("hello world");
@@ -20,12 +18,26 @@ class MyApp extends StatelessWidget {
     var json = "{\"name\":\"tom\",\"age\":\"38\",\"son\":{\"name\":\"jerry\",\"age\":\"18\",\"grandson\":{\"name\":\"lily\",\"age\":\"8\"}}}";
     Logger.json(json);
 
-    // Logger.levelVerbose = 247;
-    // Logger.levelDebug = 26;
-    // Logger.levelInfo = 28;
-    // Logger.levelWarn = 3;
-    // Logger.levelError = 9;
-    //
+    Logger.levelVerbose = 247;
+    Logger.levelDebug = 26;
+    Logger.levelInfo = 28;
+    Logger.levelWarn = 3;
+    Logger.levelError = 9;
+
+
+    // Logger.verboseColor = Colors.white54;
+    // Logger.debugColor = Colors.blue;
+    // Logger.infoColor = Colors.green;
+    // Logger.warnColor = Colors.yellow;
+    // Logger.errorColor = Colors.redAccent;
+   Logger.verboseColor = Colors.purpleAccent;
+    Logger.debugColor = Colors.purpleAccent;
+    Logger.infoColor = Colors.purpleAccent;
+    Logger.warnColor = Colors.purpleAccent;
+    Logger.errorColor = Colors.purpleAccent;
+
+
+
     // Logger.enable = false;
   }
 

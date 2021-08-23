@@ -12,7 +12,7 @@ class ConsoleWidget extends StatefulWidget {
   _ConsoleWidgetState createState() => _ConsoleWidgetState();
 }
 
-class _ConsoleWidgetState extends State<ConsoleWidget> {
+class _ConsoleWidgetState extends State<ConsoleWidget>{
   late ScrollController _controller;
 
   late TextSelectionControls _selectionControl;
@@ -28,8 +28,6 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   String _levelName = "all";
 
   double _marginTop = 0;
-
-  // final Color _curreetLeveColor = ConsoleUtil.getLevelColor(_logLevel);
 
   final double _mangerSize = 50;
 
@@ -54,8 +52,11 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
           renderObject.localToGlobal(Offset.zero).dy;
     });
 
+
     super.initState();
   }
+
+
 
   @override
   void dispose() {
@@ -68,7 +69,6 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   Widget build(BuildContext context) {
     return _buildDraggable();
   }
-
 
   Widget _buildDraggable() {
     return LayoutBuilder(builder: (context, constraints) {
@@ -101,66 +101,69 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   }
 
   Widget _buildDragView(BoxConstraints constraints) {
-    return Container(
-      width: constraints.maxWidth,
-      height: _isLarge
-          ? constraints.maxHeight - 100 + _mangerSize
-          : 200 + _mangerSize,
-      // 因为滑动的时候 不知道为啥 说  IconButton 需要 Material，暂时不知道，所以加了 Scaffold
-      child: Scaffold(
-        body: Column(
-          children: [
-            Container(
-              height: _isLarge ? constraints.maxHeight - 100 : 200,
-              color: Colors.black,
-              width: constraints.maxWidth,
-              child: ValueListenableBuilder<LogModeValue>(
-                valueListenable: notifier,
-                builder:
-                    (BuildContext context, LogModeValue model, Widget? child) {
-                  return _buildLogWidget(model);
-                },
+    // 防止软键盘，导致溢出
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Container(
+        width: constraints.maxWidth,
+        height: _isLarge
+            ? constraints.maxHeight - 100 + _mangerSize
+            : 200 + _mangerSize,
+        // 因为滑动的时候 不知道为啥 说  IconButton 需要 Material，暂时不知道，所以加了 Scaffold
+        child: Scaffold(
+          body: Column(
+            children: [
+              Container(
+                height: _isLarge ? constraints.maxHeight - 100 : 200,
+                color: Colors.black,
+                width: constraints.maxWidth,
+                child: ValueListenableBuilder<LogModeValue>(
+                  valueListenable: notifier,
+                  builder: (BuildContext context, LogModeValue model,
+                      Widget? child) {
+                    return _buildLogWidget(model);
+                  },
+                ),
               ),
-            ),
-            Container(
-              height: _mangerSize,
-              width: constraints.maxWidth,
-              color: Colors.grey,
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: _clearLog,
-                    icon: Icon(Icons.clear),
-                  ),
-                  IconButton(
-                    onPressed: _showCupertinoActionSheet,
-                    icon: Icon(Icons.print),
-                  ),
-                  Text(
-                    _levelName,
-                    style:
-                        TextStyle(color: ConsoleUtil.getLevelColor(_logLevel)),
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Expanded(
-                    child: _buildTextFiled(),
-                  ),
-                  IconButton(
-                    onPressed: _changeSize,
-                    icon: Icon(
-                        _isLarge ? Icons.crop : Icons.aspect_ratio_outlined),
-                  ),
-                ],
+              Container(
+                height: _mangerSize,
+                width: constraints.maxWidth,
+                color: Colors.grey,
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: _clearLog,
+                      icon: Icon(Icons.clear),
+                    ),
+                    IconButton(
+                      onPressed: _showCupertinoActionSheet,
+                      icon: Icon(Icons.print),
+                    ),
+                    Text(
+                      _levelName,
+                      style: TextStyle(
+                          color: ConsoleUtil.getLevelColor(_logLevel)),
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Expanded(
+                      child: _buildTextFiled(),
+                    ),
+                    IconButton(
+                      onPressed: _changeSize,
+                      icon: Icon(
+                          _isLarge ? Icons.crop : Icons.aspect_ratio_outlined),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
-
 
   Widget _buildLogWidget(LogModeValue model) {
     List<TextSpan> spanList = [];
