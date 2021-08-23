@@ -1,3 +1,4 @@
+import 'package:example/test.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easylogger/console_widget.dart';
 import 'package:flutter_easylogger/flutter_logger.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     Logger.e("hello world", tag: "TAG");
     return MaterialApp(
       title: 'Flutter Demo',

@@ -27,15 +27,33 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   String _levelName = "all";
 
+  double _marginTop = 0;
+
   // final Color _curreetLeveColor = ConsoleUtil.getLevelColor(_logLevel);
 
   final double _mangerSize = 50;
+
+  final GlobalKey _globalKey = GlobalKey();
+
+  double _currendDy = 0;
 
   @override
   void initState() {
     _controller = ScrollController();
     _selectionControl = MaterialTextSelectionControls();
     _textController = TextEditingController();
+
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      // print("-----------${context.size!.height}");
+      // _currendDy = context.size!.height;
+      RenderBox renderObject =
+          _globalKey.currentContext?.findRenderObject() as RenderBox;
+      var size = _globalKey.currentContext?.size;
+      _currendDy = renderObject.localToGlobal(Offset.zero).dy;
+      print(
+          "${renderObject.localToGlobal(Offset.zero).dy}-----------${context.size!.height}");
+    });
+
     super.initState();
   }
 
@@ -48,6 +66,68 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   @override
   Widget build(BuildContext context) {
+    return _buildDraggable1();
+  }
+
+  Widget _buildDraggable() {
+    return Draggable(
+      // key:_globalKey,
+      axis: Axis.vertical,
+      feedback: _buildDragView(),
+      child: _buildDragView(),
+      childWhenDragging: Container(),
+      // onDragEnd: (detail) {
+      //   createDragTarget(offset: detail.offset);
+      // },
+    );
+  }
+
+  Widget _buildDraggable1() {
+    return Container(
+      key: _globalKey,
+      margin: EdgeInsets.only(top: _marginTop),
+      child: Draggable(
+        axis: Axis.vertical,
+        child: Container(
+          height: 120,
+          width: 120,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              color: Colors.red, borderRadius: BorderRadius.circular(10)),
+          child: Text(
+            '孟',
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+        ),
+        feedback: Container(
+          height: 120,
+          width: 120,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+              color: Colors.blue, borderRadius: BorderRadius.circular(10)),
+          child: Text(
+            '孟',
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+        ),
+        childWhenDragging: Container(),
+        onDragEnd: (DraggableDetails details) {
+          setState(() {
+            double offY = 0;
+            if (details.offset.dy - _currendDy < 0) {
+              offY = 0;
+            } else {
+              offY = details.offset.dy - _currendDy;
+            }
+            _marginTop = offY;
+
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildDragView() {
     return LayoutBuilder(builder: (context, constraints) {
       return Column(
         children: [
@@ -82,7 +162,9 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
                   _levelName,
                   style: TextStyle(color: ConsoleUtil.getLevelColor(_logLevel)),
                 ),
-                const SizedBox(width: 5,),
+                const SizedBox(
+                  width: 5,
+                ),
                 Expanded(
                   child: _buildTextFiled(),
                 ),
@@ -121,7 +203,9 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
         ],
       );
       // 过滤日志
-      if ((_logLevel == logMode.level || _logLevel == _levelDefault)&& logMode.logMessage!=null && logMode.logMessage!.contains(_filterStr)) {
+      if ((_logLevel == logMode.level || _logLevel == _levelDefault) &&
+          logMode.logMessage != null &&
+          logMode.logMessage!.contains(_filterStr)) {
         spanList.add(span);
       }
     }
@@ -133,12 +217,12 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.all(8.0),
-        primary:true,
+        primary: true,
         child: SelectableText.rich(
           TextSpan(
             children: spanList,
           ),
-          selectionControls:_selectionControl,
+          selectionControls: _selectionControl,
         ),
       ),
     );
@@ -263,17 +347,17 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   }
 
   Widget _buildTextFiled() {
-   return Container(
-     margin: const EdgeInsets.all(5),
-     padding: EdgeInsets.only(left: 15),
-     decoration: BoxDecoration(
-       color: Colors.white,
-       borderRadius: BorderRadius.circular(20),
-     ),
-     child: TextField(
-       autofocus:false ,
+    return Container(
+      margin: const EdgeInsets.all(5),
+      padding: EdgeInsets.only(left: 15),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: TextField(
+        autofocus: false,
         controller: _textController,
-        onChanged: (value){
+        onChanged: (value) {
           _filterText(value);
         },
         textInputAction: TextInputAction.done,
@@ -289,12 +373,45 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
           border: InputBorder.none,
         ),
       ),
-   );
+    );
   }
 
   void _filterText(String value) {
     setState(() {
       _filterStr = value;
     });
+  }
+
+  Widget createDragTarget({Offset? offset}) {
+    bool isLeft = true;
+    if (offset!.dx + 100 > MediaQuery.of(context).size.width / 2) {
+      isLeft = false;
+    }
+
+    double maxY = MediaQuery.of(context).size.height - 100;
+    return Positioned(
+        top: offset.dy < 50
+            ? 50
+            : offset.dy < maxY
+                ? offset.dy
+                : maxY,
+        left: isLeft ? 0 : null,
+        right: isLeft ? null : 0,
+        child: DragTarget(
+          onWillAccept: (data) {
+            print('onWillAccept: $data');
+            return true;
+          },
+          onAccept: (data) {
+            print('onAccept: $data');
+            // refresh();
+          },
+          onLeave: (data) {
+            print('onLeave');
+          },
+          builder: (BuildContext context, List incoming, List rejected) {
+            return _buildDraggable();
+          },
+        ));
   }
 }
