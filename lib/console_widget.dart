@@ -36,6 +36,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   final GlobalKey _globalKey = GlobalKey();
 
   double _currendDy = 0;
+  double _mostEndDy = 0;
 
   @override
   void initState() {
@@ -44,14 +45,13 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
     _textController = TextEditingController();
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      // print("-----------${context.size!.height}");
-      // _currendDy = context.size!.height;
       RenderBox renderObject =
           _globalKey.currentContext?.findRenderObject() as RenderBox;
-      var size = _globalKey.currentContext?.size;
       _currendDy = renderObject.localToGlobal(Offset.zero).dy;
-      print(
-          "${renderObject.localToGlobal(Offset.zero).dy}-----------${context.size!.height}");
+
+      _mostEndDy = MediaQuery.of(context).size.height -
+          context.size!.height -
+          renderObject.localToGlobal(Offset.zero).dy;
     });
 
     super.initState();
@@ -66,120 +66,101 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildDraggable1();
+    return _buildDraggable();
   }
+
 
   Widget _buildDraggable() {
-    return Draggable(
-      // key:_globalKey,
-      axis: Axis.vertical,
-      feedback: _buildDragView(),
-      child: _buildDragView(),
-      childWhenDragging: Container(),
-      // onDragEnd: (detail) {
-      //   createDragTarget(offset: detail.offset);
-      // },
-    );
+    return LayoutBuilder(builder: (context, constraints) {
+      return Container(
+        key: _globalKey,
+        margin: EdgeInsets.only(top: _marginTop),
+        child: Draggable(
+          axis: Axis.vertical,
+          child: _buildDragView(constraints),
+          feedback: _buildDragView(constraints),
+          childWhenDragging: Container(),
+          onDragEnd: (DraggableDetails details) {
+            if (!_isLarge) {
+              setState(() {
+                double offY = 0;
+                if (details.offset.dy - _currendDy < 0) {
+                  offY = 0;
+                } else if (details.offset.dy - _currendDy > _mostEndDy) {
+                  offY = _mostEndDy;
+                } else {
+                  offY = details.offset.dy - _currendDy;
+                }
+                _marginTop = offY;
+              });
+            }
+          },
+        ),
+      );
+    });
   }
 
-  Widget _buildDraggable1() {
+  Widget _buildDragView(BoxConstraints constraints) {
     return Container(
-      key: _globalKey,
-      margin: EdgeInsets.only(top: _marginTop),
-      child: Draggable(
-        axis: Axis.vertical,
-        child: Container(
-          height: 120,
-          width: 120,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              color: Colors.red, borderRadius: BorderRadius.circular(10)),
-          child: Text(
-            '孟',
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
+      width: constraints.maxWidth,
+      height: _isLarge
+          ? constraints.maxHeight - 100 + _mangerSize
+          : 200 + _mangerSize,
+      // 因为滑动的时候 不知道为啥 说  IconButton 需要 Material，暂时不知道，所以加了 Scaffold
+      child: Scaffold(
+        body: Column(
+          children: [
+            Container(
+              height: _isLarge ? constraints.maxHeight - 100 : 200,
+              color: Colors.black,
+              width: constraints.maxWidth,
+              child: ValueListenableBuilder<LogModeValue>(
+                valueListenable: notifier,
+                builder:
+                    (BuildContext context, LogModeValue model, Widget? child) {
+                  return _buildLogWidget(model);
+                },
+              ),
+            ),
+            Container(
+              height: _mangerSize,
+              width: constraints.maxWidth,
+              color: Colors.grey,
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: _clearLog,
+                    icon: Icon(Icons.clear),
+                  ),
+                  IconButton(
+                    onPressed: _showCupertinoActionSheet,
+                    icon: Icon(Icons.print),
+                  ),
+                  Text(
+                    _levelName,
+                    style:
+                        TextStyle(color: ConsoleUtil.getLevelColor(_logLevel)),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Expanded(
+                    child: _buildTextFiled(),
+                  ),
+                  IconButton(
+                    onPressed: _changeSize,
+                    icon: Icon(
+                        _isLarge ? Icons.crop : Icons.aspect_ratio_outlined),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-        feedback: Container(
-          height: 120,
-          width: 120,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-              color: Colors.blue, borderRadius: BorderRadius.circular(10)),
-          child: Text(
-            '孟',
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-        ),
-        childWhenDragging: Container(),
-        onDragEnd: (DraggableDetails details) {
-          setState(() {
-            double offY = 0;
-            if (details.offset.dy - _currendDy < 0) {
-              offY = 0;
-            } else {
-              offY = details.offset.dy - _currendDy;
-            }
-            _marginTop = offY;
-
-          });
-        },
       ),
     );
   }
 
-  Widget _buildDragView() {
-    return LayoutBuilder(builder: (context, constraints) {
-      return Column(
-        children: [
-          Container(
-            height:
-                _isLarge ? constraints.biggest.height - _mangerSize - 100 : 200,
-            width: constraints.biggest.width,
-            color: Colors.black,
-            child: ValueListenableBuilder<LogModeValue>(
-              valueListenable: notifier,
-              builder:
-                  (BuildContext context, LogModeValue model, Widget? child) {
-                return _buildLogWidget(model);
-              },
-            ),
-          ),
-          Container(
-            height: _mangerSize,
-            width: constraints.biggest.width,
-            color: Colors.grey,
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: _clearLog,
-                  icon: Icon(Icons.clear),
-                ),
-                IconButton(
-                  onPressed: _showCupertinoActionSheet,
-                  icon: Icon(Icons.print),
-                ),
-                Text(
-                  _levelName,
-                  style: TextStyle(color: ConsoleUtil.getLevelColor(_logLevel)),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                Expanded(
-                  child: _buildTextFiled(),
-                ),
-                IconButton(
-                  onPressed: _changeSize,
-                  icon:
-                      Icon(_isLarge ? Icons.crop : Icons.aspect_ratio_outlined),
-                ),
-              ],
-            ),
-          ),
-        ],
-      );
-    });
-  }
 
   Widget _buildLogWidget(LogModeValue model) {
     List<TextSpan> spanList = [];
@@ -317,6 +298,10 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
     if (mounted) {
       setState(() {
         _isLarge = !_isLarge;
+        // 如果是 大 的情况，直接让 top 设置为 0；
+        if (_isLarge) {
+          _marginTop = 0;
+        }
         _setLevelName();
       });
     }
@@ -380,38 +365,5 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
     setState(() {
       _filterStr = value;
     });
-  }
-
-  Widget createDragTarget({Offset? offset}) {
-    bool isLeft = true;
-    if (offset!.dx + 100 > MediaQuery.of(context).size.width / 2) {
-      isLeft = false;
-    }
-
-    double maxY = MediaQuery.of(context).size.height - 100;
-    return Positioned(
-        top: offset.dy < 50
-            ? 50
-            : offset.dy < maxY
-                ? offset.dy
-                : maxY,
-        left: isLeft ? 0 : null,
-        right: isLeft ? null : 0,
-        child: DragTarget(
-          onWillAccept: (data) {
-            print('onWillAccept: $data');
-            return true;
-          },
-          onAccept: (data) {
-            print('onAccept: $data');
-            // refresh();
-          },
-          onLeave: (data) {
-            print('onLeave');
-          },
-          builder: (BuildContext context, List incoming, List rejected) {
-            return _buildDraggable();
-          },
-        ));
   }
 }
