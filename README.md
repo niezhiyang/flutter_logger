@@ -59,6 +59,7 @@ You can change the color of level, and the value is in the range of 0-255. Pleas
 Logs can be printed on the phone or filtered by log level or keyword
 
 <img src="https://github.com/niezhiyang/flutter_logger/blob/master/art/logger_phone.gif" width="30%">
+
 ```dart
 Column(
   children: [
@@ -70,7 +71,8 @@ Column(
 ),
 ```
 ## Note
+
 Turn off logging when production
-```
+```dart
 Logger.enable = false;
 ```
