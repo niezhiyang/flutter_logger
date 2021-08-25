@@ -37,6 +37,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   final GlobalKey _globalForDrag = GlobalKey();
 
   double _currendDy = 0;
+
   // double _mostEndDy = 0;
 
   @override
@@ -56,7 +57,6 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
       //   _mostEndDy = 0;
       // }
       // print("${MediaQuery.of(context).size.height}       ${context.size!.height}   ${renderObject.localToGlobal(Offset.zero).dy}");
-
     });
 
     super.initState();
@@ -76,7 +76,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   Widget _buildDraggable() {
     return LayoutBuilder(builder: (context, constraints) {
-      if(_marginTop<=0){
+      if (_marginTop <= 0) {
         _marginTop = 0;
       }
       return Container(
@@ -86,8 +86,9 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
           axis: Axis.vertical,
           child: _buildDragView(constraints),
           // _isLarge 的状态下，不准拖动
-          feedback:  _isLarge? Container():_buildDragView(constraints),
-          childWhenDragging: _isLarge? _buildDragView(constraints):Container(),
+          feedback: _isLarge ? Container() : _buildDragView(constraints),
+          childWhenDragging:
+              _isLarge ? _buildDragView(constraints) : Container(),
           onDragEnd: (DraggableDetails details) {
             _calculatePosition(details);
           },
@@ -105,12 +106,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
           double offY = 0;
           if ((details.offset.dy - _currendDy) < 0) {
             offY = 0;
-          }
-          // else if ((details.offset.dy - _currendDy) > _mostEndDy) {
-          //   print("----1111-----${details.offset.dy}   ${_currendDy}  ${details.offset.dy-_currendDy}    ${_mostEndDy}");
-          //   offY = _mostEndDy;
-          // }
-          else {
+          } else {
             offY = details.offset.dy - _currendDy;
           }
           _marginTop = offY;
@@ -148,7 +144,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
               Container(
                 height: _mangerSize,
                 width: constraints.maxWidth,
-                color: Colors.grey,
+                color: Colors.black26,
                 child: Row(
                   children: [
                     IconButton(
