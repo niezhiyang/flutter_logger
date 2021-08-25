@@ -1,6 +1,6 @@
 name: flutter_easylogger
 description: Simple, pretty and powerful logger for flutter.
-version: 2.2.0
+version: 2.2.1
 homepage: https://github.com/niezhiyang/flutter_logger
 
 environment:
