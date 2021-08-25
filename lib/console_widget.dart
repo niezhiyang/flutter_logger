@@ -50,13 +50,6 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
       RenderBox renderObject =
           _globalKey.currentContext?.findRenderObject() as RenderBox;
       _currendDy = renderObject.localToGlobal(Offset.zero).dy;
-
-      // _mostEndDy = MediaQuery.of(context).size.height - context.size!.height - renderObject.localToGlobal(Offset.zero).dy;
-      //
-      // if(_mostEndDy<=0){
-      //   _mostEndDy = 0;
-      // }
-      // print("${MediaQuery.of(context).size.height}       ${context.size!.height}   ${renderObject.localToGlobal(Offset.zero).dy}");
     });
 
     super.initState();
@@ -79,19 +72,21 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
       if (_marginTop <= 0) {
         _marginTop = 0;
       }
-      return Container(
-        key: _globalKey,
-        margin: EdgeInsets.only(top: _marginTop),
-        child: Draggable(
-          axis: Axis.vertical,
-          child: _buildDragView(constraints),
-          // _isLarge 的状态下，不准拖动
-          feedback: _isLarge ? Container() : _buildDragView(constraints),
-          childWhenDragging:
-              _isLarge ? _buildDragView(constraints) : Container(),
-          onDragEnd: (DraggableDetails details) {
-            _calculatePosition(details);
-          },
+      return SingleChildScrollView(
+        child: Container(
+          key: _globalKey,
+          margin: EdgeInsets.only(top: _marginTop),
+          child: Draggable(
+            axis: Axis.vertical,
+            child: _buildDragView(constraints),
+            // _isLarge 的状态下，不准拖动
+            feedback: _isLarge ? Container() : _buildDragView(constraints),
+            childWhenDragging:
+                _isLarge ? _buildDragView(constraints) : Container(),
+            onDragEnd: (DraggableDetails details) {
+              _calculatePosition(details);
+            },
+          ),
         ),
       );
     });
@@ -117,65 +112,63 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   Widget _buildDragView(BoxConstraints constraints) {
     // 防止软键盘，导致溢出
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
+    return Container(
       key: _globalForDrag,
-      child: Container(
-        width: constraints.maxWidth,
-        height: _isLarge
-            ? constraints.maxHeight - 100 + _mangerSize
-            : 200 + _mangerSize,
-        // 因为滑动的时候 不知道为啥 说  IconButton 需要 Material，暂时不知道，所以加了 Scaffold
-        child: Scaffold(
-          body: Column(
-            children: [
-              Container(
-                height: _isLarge ? constraints.maxHeight - 100 : 200,
-                color: Colors.black,
-                width: constraints.maxWidth,
-                child: ValueListenableBuilder<LogModeValue>(
-                  valueListenable: Logger.notifier,
-                  builder: (BuildContext context, LogModeValue model,
-                      Widget? child) {
-                    return _buildLogWidget(model);
-                  },
-                ),
+      width: constraints.maxWidth,
+      height: _isLarge
+          ? constraints.maxHeight - 100 + _mangerSize
+          : 200 + _mangerSize,
+      // 因为滑动的时候 不知道为啥 说  IconButton 需要 Material，暂时不知道，所以加了 Scaffold
+      child: Scaffold(
+        resizeToAvoidBottomInset:false,
+        body: Column(
+          children: [
+            Container(
+              height: _isLarge ? constraints.maxHeight - 100 : 200,
+              color: Colors.black,
+              width: constraints.maxWidth,
+              child: ValueListenableBuilder<LogModeValue>(
+                valueListenable: Logger.notifier,
+                builder:
+                    (BuildContext context, LogModeValue model, Widget? child) {
+                  return _buildLogWidget(model);
+                },
               ),
-              Container(
-                height: _mangerSize,
-                width: constraints.maxWidth,
-                color: Colors.black26,
-                child: Row(
-                  children: [
-                    IconButton(
-                      onPressed: _clearLog,
-                      icon: Icon(Icons.clear),
-                    ),
-                    IconButton(
-                      onPressed: _showCupertinoActionSheet,
-                      icon: Icon(Icons.print),
-                    ),
-                    Text(
-                      _levelName,
-                      style: TextStyle(
-                          color: ConsoleUtil.getLevelColor(_logLevel)),
-                    ),
-                    const SizedBox(
-                      width: 5,
-                    ),
-                    Expanded(
-                      child: _buildTextFiled(),
-                    ),
-                    IconButton(
-                      onPressed: _changeSize,
-                      icon: Icon(
-                          _isLarge ? Icons.crop : Icons.aspect_ratio_outlined),
-                    ),
-                  ],
-                ),
+            ),
+            Container(
+              height: _mangerSize,
+              width: constraints.maxWidth,
+              color: Colors.black26,
+              child: Row(
+                children: [
+                  IconButton(
+                    onPressed: _clearLog,
+                    icon: Icon(Icons.clear),
+                  ),
+                  IconButton(
+                    onPressed: _showCupertinoActionSheet,
+                    icon: Icon(Icons.print),
+                  ),
+                  Text(
+                    _levelName,
+                    style:
+                        TextStyle(color: ConsoleUtil.getLevelColor(_logLevel)),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  Expanded(
+                    child: _buildTextFiled(),
+                  ),
+                  IconButton(
+                    onPressed: _changeSize,
+                    icon: Icon(
+                        _isLarge ? Icons.crop : Icons.aspect_ratio_outlined),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
