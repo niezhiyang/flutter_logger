@@ -79,8 +79,9 @@ class LoggerPrinter extends Printer {
 
     String fileName = LoggerUtil.getFileInfo();
     DateTime dateTime = DateTime.now();
-    String prefix = "${Logger.isShowTime ? dateTime : ""} ${getLevelFirst(level)}${Logger.isShowFile ? fileName : ""} : ${tag ?? ""}";
-    String prefixForPhone = "${LoggerUtil.formatDate(dateTime)} ${fileName} : ${tag ?? ""}";
+    String time = LoggerUtil.formatDate(dateTime);
+    String prefix = "${getLevelFirst(level)}${Logger.isShowTime ? dateTime : ""} ${Logger.isShowFile ? fileName : ""} : ${tag ?? ""}";
+    String prefixForPhone = "$time ${fileName} : ${tag ?? ""}";
 
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       // 在ios平台，ide ，ansi颜色识别不了
@@ -128,7 +129,7 @@ class LoggerPrinter extends Printer {
     LogMode mode = LogMode(
       level: level,
       fileName: fileName,
-      time: LoggerUtil.formatDate(dateTime),
+      time: time,
       logMessage: logMessage.toString(),
     );
     Logger.notifier.addLog(mode);

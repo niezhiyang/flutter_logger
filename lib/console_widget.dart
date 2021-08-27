@@ -17,9 +17,9 @@ class ConsoleWidget extends StatefulWidget {
 }
 
 class _ConsoleWidgetState extends State<ConsoleWidget> {
-  static const int _logAll = 1;
-  static const int _logOnlyFile = 2;
-  static const int _logOnlyTime = 3;
+  static const int _logAll = 0;
+  static const int _logOnlyFile = 1;
+  static const int _logOnlyTime = 2;
 
   late ScrollController _controller;
 
@@ -32,7 +32,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   int _logLevel = _levelDefault;
 
-  int _logStyle = 1;
+  int _logStyle = 0;
 
   bool _isLarge = false;
 
@@ -122,9 +122,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   }
 
   Widget _buildDragView(BoxConstraints constraints) {
-    // 防止软键盘，导致溢出
     return Container(
-      key: _globalForDrag,
       width: constraints.maxWidth,
       height: _isLarge
           ? constraints.maxHeight - 100 + _mangerSize
@@ -450,7 +448,6 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   /// 样式
   String _getLog(LogMode logMode) {
-    _logStyle++;
     String log = logMode.logMessage??"";
     switch (_logStyle % 3) {
       case _logAll:
@@ -464,6 +461,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
         break;
     }
 
+    // print(log);
     return log;
   }
 }

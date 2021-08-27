@@ -5,6 +5,21 @@ import 'package:flutter_easylogger/log_mode.dart';
 import 'package:flutter_easylogger/logger_printer.dart';
 
 void main() {
+  Logger.init(
+    true,
+    isShowFile: true,
+    isShowTime: false,
+    levelVerbose: 247,
+    levelDebug: 26,
+    levelInfo: 28,
+    levelWarn: 3,
+    levelError: 3,
+    phoneVerbose: Colors.white54,
+    phoneDebug: Colors.blue,
+    phoneInfo: Colors.green,
+    phoneWarn: Colors.yellow,
+    phoneError: Colors.redAccent,
+  );
   runApp(const MyApp());
 }
 
@@ -21,22 +36,7 @@ class MyApp extends StatelessWidget {
         "{\"name\":\"tom\",\"age\":\"38\",\"son\":{\"name\":\"jerry\",\"age\":\"18\",\"grandson\":{\"name\":\"lily\",\"age\":\"8\"}}}";
     Logger.json(json);
 
-    Logger.levelVerbose = 247;
-    Logger.levelDebug = 26;
-    Logger.levelInfo = 28;
-    Logger.levelWarn = 3;
-    Logger.levelError = 9;
 
-    Logger.verboseColor = Colors.white54;
-    Logger.debugColor = Colors.blue;
-    Logger.infoColor = Colors.green;
-    Logger.warnColor = Colors.yellow;
-    Logger.errorColor = Colors.redAccent;
-    // 自己添加日志，打印到手机上的，比如说一些错误。
-    Logger.notifier
-        .addLog(LogMode(logMessage: "我是build错误", level: LoggerPrinter.error));
-
-    // Logger.enable = false;
   }
 
   @override
