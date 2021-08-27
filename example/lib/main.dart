@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easylogger/console_widget.dart';
 import 'package:flutter_easylogger/flutter_logger.dart';
-import 'package:flutter_easylogger/log_mode.dart';
-import 'package:flutter_easylogger/logger_printer.dart';
 
 void main() {
   Logger.init(

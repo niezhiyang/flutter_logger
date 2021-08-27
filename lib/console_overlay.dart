@@ -2,23 +2,58 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_easylogger/logger_printer.dart';
+import 'package:flutter/widgets.dart';
 
+import 'console_widget.dart';
 import 'flutter_logger.dart';
-import 'src/console_util.dart';
 import 'log_mode.dart';
+import 'logger_printer.dart';
+import 'src/console_util.dart';
 
-class ConsoleWidget extends StatefulWidget {
-  ConsoleWidget({Key? key}) : super(key: key);
+class ConsoleOverlay {
+  static OverlayEntry? _entry;
+  static bool isShow = false;
 
-  @override
-  _ConsoleWidgetState createState() => _ConsoleWidgetState();
+  static void show(BuildContext context) {
+    if (!isShow) {
+      _entry = OverlayEntry(builder: (_) {
+        return Align(
+          alignment: Alignment.topCenter,
+          child: Container(
+            padding: const EdgeInsets.only(top: 40),
+            child: ConsoleOverlayWidget(),
+          ),
+        );
+      });
+      Overlay.of(context)?.insert(_entry!);
+      isShow = true;
+    }
+  }
+
+  static remove() {
+    isShow = false;
+    _entry?.remove();
+  }
 }
 
-class _ConsoleWidgetState extends State<ConsoleWidget> {
+class ConsoleOverlayWidget extends StatefulWidget {
+  ConsoleOverlayWidget({Key? key}) : super(key: key);
+
+  @override
+  _ConsoleOverlayWidgetState createState() => _ConsoleOverlayWidgetState();
+}
+
+class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
   static const int _logAll = 0;
   static const int _logOnlyFile = 1;
   static const int _logOnlyTime = 2;
+  final SizedBox _divider = const SizedBox(
+    height: 5,
+    width: 80,
+    child: Divider(
+      color: Colors.black26,
+    ),
+  );
 
   late ScrollController _controller;
 
@@ -77,22 +112,26 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
       if (_marginTop <= 0) {
         _marginTop = 0;
       }
-      return SingleChildScrollView(
-        child: Container(
-          key: _globalKey,
-          margin: EdgeInsets.only(top: _marginTop),
-          child: Draggable(
-            axis: Axis.vertical,
-            child: _buildDragView(constraints),
-            // _isLarge 的状态下，不准拖动
-            feedback: _isLarge ? Container() : _buildDragView(constraints),
-            childWhenDragging:
-                _isLarge ? _buildDragView(constraints) : Container(),
-            onDragEnd: (DraggableDetails details) {
-              _calculatePosition(details);
-            },
-          ),
-        ),
+      return Stack(
+        children: [
+          Positioned(
+            top: _marginTop,
+            child: Container(
+              key: _globalKey,
+              child: Draggable(
+                axis: Axis.vertical,
+                child: _buildDragView(constraints),
+                // _isLarge 的状态下，不准拖动
+                feedback: _isLarge ? Container() : _buildDragView(constraints),
+                childWhenDragging:
+                    _isLarge ? _buildDragView(constraints) : Container(),
+                onDragEnd: (DraggableDetails details) {
+                  _calculatePosition(details);
+                },
+              ),
+            ),
+          )
+        ],
       );
     });
   }
@@ -118,69 +157,73 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   Widget _buildDragView(BoxConstraints constraints) {
     return Container(
       width: constraints.maxWidth,
-      key:_globalForDrag,
-      height: _isLarge
-          ? constraints.maxHeight - 100 + _mangerSize
-          : 200 + _mangerSize,
+      key: _globalForDrag,
+      height:
+          _isLarge ? constraints.maxHeight + _mangerSize : 200 + _mangerSize,
       // 因为滑动的时候 不知道为啥 说  IconButton 需要 Material，暂时不知道，所以加了 Scaffold
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        body: Column(
+        body: Stack(
           children: [
-            Container(
-              height: _isLarge ? constraints.maxHeight - 100 : 200,
-              color: Colors.black,
-              width: constraints.maxWidth,
-              child: ValueListenableBuilder<LogModeValue>(
-                valueListenable: Logger.notifier,
-                builder: (_, model, child) {
-                  return _buildLogWidget(model);
-                },
-              ),
+            Column(
+              children: [
+                Container(
+                  height: _isLarge ? constraints.maxHeight - 50 : 200,
+                  color: Colors.black,
+                  width: constraints.maxWidth,
+                  child: ValueListenableBuilder<LogModeValue>(
+                    valueListenable: Logger.notifier,
+                    builder: (_, model, child) {
+                      return _buildLogWidget(model);
+                    },
+                  ),
+                ),
+                Container(
+                  height: _mangerSize,
+                  width: constraints.maxWidth,
+                  color: Colors.black26,
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: _clearLog,
+                        icon: const Icon(Icons.clear),
+                      ),
+                      IconButton(
+                        onPressed: _changeStyle,
+                        icon: const Icon(Icons.style),
+                      ),
+                      IconButton(
+                        onPressed: _showCupertinoActionSheet,
+                        icon: const Icon(Icons.print),
+                      ),
+                      Text(
+                        _levelName,
+                        style: TextStyle(
+                            color: ConsoleUtil.getLevelColor(_logLevel)),
+                      ),
+                      const SizedBox(
+                        width: 5,
+                      ),
+                      Expanded(
+                        child: _buildTextFiled(),
+                      ),
+                      IconButton(
+                        onPressed: _changeSize,
+                        icon: Icon(_isLarge
+                            ? Icons.crop
+                            : Icons.aspect_ratio_outlined),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            Container(
-              height: _mangerSize,
-              width: constraints.maxWidth,
-              color: Colors.black26,
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: _clearLog,
-                    icon: const Icon(Icons.clear),
-                  ),
-                  IconButton(
-                    onPressed: _changeStyle,
-                    icon: const Icon(Icons.style),
-                  ),
-                  IconButton(
-                    onPressed: _showCupertinoActionSheet,
-                    icon: const Icon(Icons.print),
-                  ),
-                  Text(
-                    _levelName,
-                    style:
-                        TextStyle(color: ConsoleUtil.getLevelColor(_logLevel)),
-                  ),
-                  const SizedBox(
-                    width: 5,
-                  ),
-                  Expanded(
-                    child: _buildTextFiled(),
-                  ),
-                  IconButton(
-                    onPressed: _changeSize,
-                    icon: Icon(
-                        _isLarge ? Icons.crop : Icons.aspect_ratio_outlined),
-                  ),
-                ],
-              ),
-            ),
+            _logMenuWidget(),
           ],
         ),
       ),
     );
   }
-
 
   Widget _buildLogWidget(LogModeValue model) {
     List<LogMode> modeList = model.logModeList;
@@ -303,6 +346,56 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
         });
   }
 
+  void onPressed() {}
+
+  bool isVisiable = false;
+
+  final List<String> _logLevelFilter = [
+    "清除过滤",
+    "verbose",
+    "debug",
+    "info",
+    "warn",
+    "error",
+    "取消"
+  ];
+
+
+
+  Widget _logMenuWidget() {
+    ButtonThemeData theme = ButtonTheme.of(context).copyWith(height: 30);
+    return Positioned(
+        left: 30,
+        child: Offstage(
+          offstage: isVisiable,
+          child: Card(
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(5.0))),
+            elevation: 10,
+            color: Colors.white,
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: _logLevelFilter.map((value) {
+                  return Column(
+                    children: [
+                      Container(
+                        height: 30,
+                        child: MaterialButton(
+                          onPressed: onPressed,
+                          child: Text(value,style: TextStyle(color: _levelName==value?Colors.blue:Colors.black87,fontSize: 15,fontWeight: FontWeight.w400),),
+                        ),
+                      ),
+                      Offstage(child: _divider, offstage: value.contains("取消")),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+        ));
+  }
+
   /// 过滤log
   void filterLog(BuildContext context, int level) {
     if (mounted) {
@@ -399,22 +492,20 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   /// 样式
   String _getLog(LogMode logMode) {
-    String log = logMode.logMessage??"";
+    String log = logMode.logMessage ?? "";
     switch (_logStyle % 3) {
       case _logAll:
-        log = logMode.logMessage??"";
+        log = logMode.logMessage ?? "";
         break;
       case _logOnlyFile:
-        log = log.replaceAll(logMode.fileName??"","");
+        log = log.replaceAll(logMode.fileName ?? "", "");
         break;
       case _logOnlyTime:
-        log = log.replaceAll(logMode.time??"","");
+        log = log.replaceAll(logMode.time ?? "", "");
         break;
     }
 
     // print(log);
     return log;
   }
-
-
 }
