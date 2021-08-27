@@ -3,17 +3,33 @@ import 'dart:convert';
 import '../flutter_logger.dart';
 import '../log_mode.dart';
 
-class FileUtil {
+class LoggerUtil {
   /// 拿到当前文件名字 和 行号
   static String getFileInfo() {
     String fileStr = "";
     try {
       String traceString = StackTrace.current.toString().split("\n")[4];
+
       int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_]+.dart'));
+
       String fileInfo = traceString.substring(indexOfFileName);
-      List<String> listOfInfos = fileInfo.split(":");
-      String fileName = listOfInfos[0];
-      String lineNumber = listOfInfos[1];
+      String fileName = "";
+      String lineNumber = "";
+      // 先考虑 android ios 以及 web
+      if (traceString.contains("#")) {
+        // 代表 android 或者 ios
+        List<String> listOfInfos = fileInfo.split(":");
+        fileName = listOfInfos[0];
+        lineNumber = listOfInfos[1];
+      } else {
+        // web
+        traceString = StackTrace.current.toString().split("\n")[5];
+        int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_]+.dart'));
+        String fileInfo = traceString.substring(indexOfFileName);
+        fileName = fileInfo.split(" ")[0];
+        lineNumber = fileInfo.split(" ")[1].split(":")[0];
+      }
+
       fileStr = "[$fileName, $lineNumber]";
     } catch (e) {
       // NoThing
@@ -21,6 +37,8 @@ class FileUtil {
 
     return fileStr;
   }
+
+
 
   ///json字符串格式化
   static String jsonFormat(String json) {
@@ -115,5 +133,34 @@ class FileUtil {
       // tab.write("\t");
     }
     return tab.toString();
+  }
+  static String format(DateTime date,{bool haveDay = false}) {
+    StringBuffer buffer = StringBuffer();
+    if(haveDay){
+      var day =  date.toString().split(" ")[0];
+      buffer.write(day);
+      buffer.write(" ");
+    }
+    var time =  date.toString().split(" ")[1].split(".")[0];
+
+    buffer.write(time);
+    return buffer.toString();
+  }
+
+  static String formatDate(DateTime? date,{bool haveDay = true}) {
+    StringBuffer buffer = StringBuffer();
+    try {
+      if(haveDay){
+            var day =  date.toString().split(" ")[0];
+            buffer.write(day);
+            buffer.write(" ");
+          }
+      var time =  date.toString().split(" ")[1].split(".")[0];
+
+      buffer.write(time);
+    } catch (e) {
+      // do
+    }
+    return buffer.toString();
   }
 }

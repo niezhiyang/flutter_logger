@@ -1,6 +1,6 @@
-
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_easylogger/log_mode.dart';
 
 import 'flutter_logger.dart';
@@ -21,11 +21,17 @@ class LoggerPrinter extends Printer {
   static const String _topRight = '┐';
   static const String _bottomRight = '┘';
   static const String _verticalLine = '│';
-  // static const String _verticalLineIos = '▕ ';
-  static const String _verticalLineIos = '｜';
-  // static const String _verticalLineIos = ' │';
   static const String _divider =
       "────────────────────────────────────────────────────────";
+
+  //  暂时发现 在 macOs 上 ，应用内，上面的几个都 识别不了
+  static const String _verticalLineMacOs = '| ';
+  static const String _dividerMacOs =
+      "——————————————————————————————————————————————————————";
+
+  //  暂时发现 在 ios 上 ，应用内 _verticalLine 有空格，所以替换成这个
+  static const String _verticalLineIos = '｜';
+
   static const String _topBorder = "$_topLeft$_divider$_divider$_topRight";
   static const String _bottomBorder =
       "$_bottomLeft$_divider$_divider$_bottomRight";
@@ -58,55 +64,73 @@ class LoggerPrinter extends Printer {
   @override
   void json(String? json, {String? tag}) {
     if (json != null) {
-      log(debug, FileUtil.jsonFormat(json), tag);
+      log(debug, LoggerUtil.jsonFormat(json), tag);
     }
   }
 
   void log(int level, Object? object, String? tag, {bool isJson = false}) {
-    if (ansiColorDisabled) {
-      ansiColorDisabled = false;
-    }
+    ansiColorDisabled = false;
+
     if (object == null || object.toString().isEmpty || !Logger.isEnable()) {
       return;
     }
     String message = object.toString();
     AnsiPen pen = getAnsiPen(level);
 
-    String fileName = FileUtil.getFileInfo();
+    String fileName = LoggerUtil.getFileInfo();
+    DateTime dateTime = DateTime.now();
+    String prefix = "${Logger.isShowTime ? dateTime : ""} ${getLevelFirst(level)}${Logger.isShowFile ? fileName : ""} : ${tag ?? ""}";
+    String prefixForPhone = "${LoggerUtil.formatDate(dateTime)} ${fileName} : ${tag ?? ""}";
 
-    String prefix =
-        "${getLevelFirst(level)}${Logger.isShowFile ? fileName : ""} : ${tag ?? ""}";
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      // 在ios平台，ide ，ansi颜色识别不了
+      ansiColorDisabled = true;
+    }
 
     // 绘制开始时上边的分割线
-    if (!Platform.isAndroid){
-      ansiColorDisabled =true;
-    }
     StringBuffer logMessage = StringBuffer();
 
-    print("${pen.call("$prefix $_topBorder")}");
+    print(pen.call("$prefix $_topBorder"));
 
-    logMessage.write("$prefix $_topBorder\n");
-
+    if (defaultTargetPlatform == TargetPlatform.macOS ||
+        defaultTargetPlatform == TargetPlatform.windows) {
+      logMessage.write("$prefixForPhone $_dividerMacOs\n");
+    } else {
+      logMessage.write("$prefixForPhone $_topBorder\n");
+    }
 
     // 处理有换行符的，比如说json
     List<String> lines = message.split("\n");
 
     for (String element in lines) {
-      print("${pen.call("$prefix $_verticalLine $element")}");
-      if (Platform.isIOS) {
-        //主要是运行在手机上的 日志， 因为运行在ios上会有不等宽的字符，随意加宽一个空格，
-        logMessage.write("$prefix $_verticalLineIos $element\n");
-      }else{
-        logMessage.write("$prefix $_verticalLine $element\n");
+      print(pen.call("$prefix $_verticalLine $element"));
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        //主要是运行在ios手机上的 日志， 因为运行在ios上会有不等宽的字符，随意加宽一个空格，
+        logMessage.write("$prefixForPhone $_verticalLineIos $element\n");
+      } else if (defaultTargetPlatform == TargetPlatform.macOS ||
+          defaultTargetPlatform == TargetPlatform.windows) {
+        logMessage.write("$prefixForPhone $_verticalLineMacOs $element\n");
+      } else {
+        logMessage.write("$prefixForPhone $_verticalLine $element\n");
       }
-
     }
 
     // 绘制结束时下边的分割线
-    print("${pen.call("$prefix $_bottomBorder")}");
-    logMessage.write("$prefix $_bottomBorder");
+    print(pen.call("$prefix $_bottomBorder"));
 
-    LogMode mode = LogMode(level: level,logMessage: logMessage.toString());
+    if (defaultTargetPlatform == TargetPlatform.macOS ||
+        defaultTargetPlatform == TargetPlatform.windows) {
+      logMessage.write("$prefixForPhone $_dividerMacOs\n");
+    } else {
+      logMessage.write("$prefixForPhone $_bottomBorder");
+    }
+
+    LogMode mode = LogMode(
+      level: level,
+      fileName: fileName,
+      time: LoggerUtil.formatDate(dateTime),
+      logMessage: logMessage.toString(),
+    );
     Logger.notifier.addLog(mode);
   }
 

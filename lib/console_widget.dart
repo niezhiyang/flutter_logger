@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easylogger/logger_printer.dart';
+import 'package:flutter_easylogger/src/file_util.dart';
 
 import 'flutter_logger.dart';
 import 'src/console_util.dart';
@@ -15,6 +17,10 @@ class ConsoleWidget extends StatefulWidget {
 }
 
 class _ConsoleWidgetState extends State<ConsoleWidget> {
+  static const int _logAll = 1;
+  static const int _logOnlyFile = 2;
+  static const int _logOnlyTime = 3;
+
   late ScrollController _controller;
 
   late TextSelectionControls _selectionControl;
@@ -25,6 +31,9 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   String _filterStr = "";
 
   int _logLevel = _levelDefault;
+
+  int _logStyle = 1;
+
   bool _isLarge = false;
 
   String _levelName = "all";
@@ -38,8 +47,6 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   double _currendDy = 0;
 
-  // double _mostEndDy = 0;
-
   @override
   void initState() {
     _controller = ScrollController();
@@ -51,7 +58,6 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
           _globalKey.currentContext?.findRenderObject() as RenderBox;
       _currendDy = renderObject.localToGlobal(Offset.zero).dy;
     });
-
     super.initState();
   }
 
@@ -64,7 +70,12 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildDraggable();
+    return GestureDetector(
+      onTap: () {
+        _closeKeyBoard();
+      },
+      child: _buildDraggable(),
+    );
   }
 
   Widget _buildDraggable() {
@@ -120,7 +131,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
           : 200 + _mangerSize,
       // 因为滑动的时候 不知道为啥 说  IconButton 需要 Material，暂时不知道，所以加了 Scaffold
       child: Scaffold(
-        resizeToAvoidBottomInset:false,
+        resizeToAvoidBottomInset: false,
         body: Column(
           children: [
             Container(
@@ -129,9 +140,8 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
               width: constraints.maxWidth,
               child: ValueListenableBuilder<LogModeValue>(
                 valueListenable: Logger.notifier,
-                builder:
-                    (BuildContext context, LogModeValue model, Widget? child) {
-                  return _buildLogWidget(model);
+                builder: (_, model, child) {
+                  return _buildLogWidget1(model);
                 },
               ),
             ),
@@ -143,11 +153,15 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
                 children: [
                   IconButton(
                     onPressed: _clearLog,
-                    icon: Icon(Icons.clear),
+                    icon: const Icon(Icons.clear),
+                  ),
+                  IconButton(
+                    onPressed: _changeStyle,
+                    icon: const Icon(Icons.style),
                   ),
                   IconButton(
                     onPressed: _showCupertinoActionSheet,
-                    icon: Icon(Icons.print),
+                    icon: const Icon(Icons.print),
                   ),
                   Text(
                     _levelName,
@@ -204,9 +218,7 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
     }
 
     return Scrollbar(
-      // controller: _controller,
       scrollbarOrientation: ScrollbarOrientation.bottom,
-
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.all(8.0),
@@ -221,10 +233,57 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
     );
   }
 
+  Widget _buildLogWidget1(LogModeValue model) {
+    List<LogMode> modeList = model.logModeList;
+    List<LogMode> fiterList = [];
+    for (int i = modeList.length - 1; i >= 0; i--) {
+      LogMode logMode = modeList[i];
+      // 过滤日志
+      if ((_logLevel == logMode.level || _logLevel == _levelDefault) &&
+          logMode.logMessage != null &&
+          logMode.logMessage!.contains(_filterStr)) {
+        fiterList.add(logMode);
+      }
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: SizedBox(
+        width: 2500,
+        child: ListView.builder(
+          controller: _controller,
+          reverse: true,
+          physics: const ClampingScrollPhysics(),
+          shrinkWrap: true,
+          itemBuilder: (context, index) {
+            LogMode logMode = fiterList[index];
+            TextStyle _logStyle = TextStyle(
+                color: ConsoleUtil.getLevelColor(logMode.level),
+                fontSize: 15,
+                decoration: TextDecoration.none,
+                fontWeight: FontWeight.w400);
+            String log = _getLog(logMode);
+            return Text(log, style: _logStyle);
+          },
+          itemCount: fiterList.length,
+        ),
+      ),
+    );
+  }
+
   /// 清除日志
   void _clearLog() {
     _closeKeyBoard();
     Logger.notifier.value = LogModeValue();
+  }
+
+  /// 设置log样式，是否显示时间，是否显示文件名
+  void _changeStyle() {
+    if (mounted) {
+      setState(() {
+        _logStyle++;
+      });
+    }
   }
 
   /// 过滤日志
@@ -387,5 +446,24 @@ class _ConsoleWidgetState extends State<ConsoleWidget> {
   void _closeKeyBoard() {
     SystemChannels.textInput.invokeMethod('TextInput.hide');
     FocusManager.instance.primaryFocus?.unfocus();
+  }
+
+  /// 样式
+  String _getLog(LogMode logMode) {
+    _logStyle++;
+    String log = logMode.logMessage??"";
+    switch (_logStyle % 3) {
+      case _logAll:
+        log = logMode.logMessage??"";
+        break;
+      case _logOnlyFile:
+        log = log.replaceAll(logMode.fileName??"","");
+        break;
+      case _logOnlyTime:
+        log = log.replaceAll(logMode.time??"","");
+        break;
+    }
+
+    return log;
   }
 }
