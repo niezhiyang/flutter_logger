@@ -10,7 +10,7 @@ class LoggerUtil {
     try {
       String traceString = StackTrace.current.toString().split("\n")[4];
 
-      int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_]+.dart'));
+      int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_1-9]+.dart'));
 
       String fileInfo = traceString.substring(indexOfFileName);
       String fileName = "";

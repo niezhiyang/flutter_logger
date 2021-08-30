@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easylogger/console_overlay.dart';
 import 'package:flutter_easylogger/console_widget.dart';
 import 'package:flutter_easylogger/flutter_logger.dart';
 
@@ -6,7 +7,7 @@ void main() {
   Logger.init(
     true,
     isShowFile: true,
-    isShowTime: false,
+    isShowTime: true,
     levelVerbose: 247,
     levelDebug: 26,
     levelInfo: 28,
@@ -52,14 +53,32 @@ class MyApp extends StatelessWidget {
           onPressed: onPressed,
           child: Icon(Icons.add),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child: ConsoleWidget(),
-            )
-          ],
-        ),
+        body: Demo(),
       ),
     );
   }
 }
+
+class Demo extends StatefulWidget {
+  const Demo({Key? key}) : super(key: key);
+
+  @override
+  _DemoState createState() => _DemoState();
+}
+
+class _DemoState extends State<Demo> {
+  @override
+  void initState() {
+    super.initState();
+    // 打开 ConsoleOverlay
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      ConsoleOverlay.show(context);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+

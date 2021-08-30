@@ -9,6 +9,7 @@ import 'flutter_logger.dart';
 import 'log_mode.dart';
 import 'logger_printer.dart';
 import 'src/console_util.dart';
+import 'src/filter_menu_mode.dart';
 
 class ConsoleOverlay {
   static OverlayEntry? _entry;
@@ -44,6 +45,7 @@ class ConsoleOverlayWidget extends StatefulWidget {
 }
 
 class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
+   ValueNotifier<FilterMenu> _menuValue = ValueNotifier(FilterMenu(10, true));
   static const int _logAll = 0;
   static const int _logOnlyFile = 1;
   static const int _logOnlyTime = 2;
@@ -193,7 +195,10 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
                         icon: const Icon(Icons.style),
                       ),
                       IconButton(
-                        onPressed: _showCupertinoActionSheet,
+                        onPressed: () {
+                          _menuValue.value.isVisible = false;
+                          _menuValue.notifyListeners();
+                        },
                         icon: const Icon(Icons.print),
                       ),
                       Text(
@@ -278,80 +283,12 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
     }
   }
 
-  /// 过滤日志
-  Future _showCupertinoActionSheet() async {
-    var result = await showCupertinoModalPopup(
-        context: context,
-        builder: (context) {
-          return CupertinoActionSheet(
-            title: const Text('提示'),
-            message: const Text('选择过滤日志级别？'),
-            actions: [
-              CupertinoActionSheetAction(
-                child: const Text('清除过滤'),
-                onPressed: () {
-                  filterLog(context, _levelDefault);
-                },
-                isDefaultAction: _logLevel != _levelDefault,
-                isDestructiveAction: _logLevel == _levelDefault,
-              ),
-              CupertinoActionSheetAction(
-                child: const Text('verbose'),
-                onPressed: () {
-                  filterLog(context, LoggerPrinter.verbose);
-                },
-                isDefaultAction: _logLevel != LoggerPrinter.verbose,
-                isDestructiveAction: _logLevel == LoggerPrinter.verbose,
-              ),
-              CupertinoActionSheetAction(
-                child: const Text('debug'),
-                onPressed: () {
-                  filterLog(context, LoggerPrinter.debug);
-                },
-                isDefaultAction: _logLevel != LoggerPrinter.debug,
-                isDestructiveAction: _logLevel == LoggerPrinter.debug,
-              ),
-              CupertinoActionSheetAction(
-                child: const Text('info'),
-                onPressed: () {
-                  filterLog(context, LoggerPrinter.info);
-                },
-                isDefaultAction: _logLevel != LoggerPrinter.info,
-                isDestructiveAction: _logLevel == LoggerPrinter.info,
-              ),
-              CupertinoActionSheetAction(
-                child: const Text('warn'),
-                onPressed: () {
-                  filterLog(context, LoggerPrinter.warn);
-                },
-                isDefaultAction: _logLevel != LoggerPrinter.warn,
-                isDestructiveAction: _logLevel == LoggerPrinter.warn,
-              ),
-              CupertinoActionSheetAction(
-                child: const Text('error'),
-                onPressed: () {
-                  filterLog(context, LoggerPrinter.error);
-                },
-                isDestructiveAction: _logLevel == LoggerPrinter.error,
-                isDefaultAction: _logLevel != LoggerPrinter.error,
-              ),
-            ],
-            cancelButton: CupertinoActionSheetAction(
-              child: const Text('取消'),
-              onPressed: () {
-                Navigator.of(context).pop('cancel');
-              },
-            ),
-          );
-        });
-  }
 
   void onPressed() {}
 
-  bool isVisiable = false;
 
   final List<String> _logLevelFilter = [
-    "清除过滤",
+    "all",
     "verbose",
     "debug",
     "info",
@@ -360,52 +297,89 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
     "取消"
   ];
 
-
-
   Widget _logMenuWidget() {
-    ButtonThemeData theme = ButtonTheme.of(context).copyWith(height: 30);
-    return Positioned(
-        left: 30,
-        child: Offstage(
-          offstage: isVisiable,
-          child: Card(
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(5.0))),
-            elevation: 10,
-            color: Colors.white,
-            child: Container(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: _logLevelFilter.map((value) {
-                  return Column(
-                    children: [
-                      Container(
-                        height: 30,
-                        child: MaterialButton(
-                          onPressed: onPressed,
-                          child: Text(value,style: TextStyle(color: _levelName==value?Colors.blue:Colors.black87,fontSize: 15,fontWeight: FontWeight.w400),),
-                        ),
-                      ),
-                      Offstage(child: _divider, offstage: value.contains("取消")),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
-          ),
-        ));
+    return ValueListenableBuilder<FilterMenu>(
+        valueListenable: _menuValue,
+        builder: (_, model, child) {
+          return  Positioned(
+              left: 80,
+              bottom: _isLarge?70:0,
+              child: Offstage(
+                offstage: model.isVisible,
+                child: Card(
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  elevation: 10,
+                  color: Colors.white,
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: _logLevelFilter.map((value) {
+                        return Column(
+                          children: [
+                            Container(
+                              height: 30,
+                              child: MaterialButton(
+                                onPressed: () {
+                                  filterLog(value);
+                                },
+                                child: Text(
+                                  value,
+                                  style: TextStyle(
+                                      color: _levelName == value
+                                          ? Colors.blue
+                                          : Colors.black87,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w400),
+                                ),
+                              ),
+                            ),
+                            Offstage(child: _divider, offstage: value.contains("取消")),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ),
+              ));
+        });
   }
 
   /// 过滤log
-  void filterLog(BuildContext context, int level) {
-    if (mounted) {
-      _closeKeyBoard();
-      setState(() {
-        _logLevel = level;
-        _setLevelName();
-      });
+  void filterLog(String buttonValue) {
+
+    if(buttonValue != "取消"){
+      if (mounted) {
+        _closeKeyBoard();
+        setState(() {
+          switch (buttonValue) {
+            case "all":
+              _logLevel =  _levelDefault;
+              break;
+            case "verbose":
+              _logLevel =  LoggerPrinter.verbose;
+              break;
+            case "debug":
+              _logLevel =  LoggerPrinter.debug;
+              break;
+            case "info":
+              _logLevel =  LoggerPrinter.info;
+              break;
+            case "warn":
+              _logLevel =  LoggerPrinter.warn;
+              break;
+            case "error":
+              _logLevel = LoggerPrinter.error;
+              break;
+          }
+          _levelName = buttonValue;
+        });
+      }
     }
-    Navigator.of(context).pop('delete');
+
+    _menuValue.value.isVisible = true;
+    _menuValue.notifyListeners();
+
   }
 
   /// 更改大小
@@ -418,34 +392,11 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
         if (_isLarge) {
           _marginTop = 0;
         }
-        _setLevelName();
       });
     }
   }
 
-  /// 得到当前的名字
-  void _setLevelName() {
-    switch (_logLevel) {
-      case _levelDefault:
-        _levelName = "all";
-        break;
-      case LoggerPrinter.verbose:
-        _levelName = "verbose";
-        break;
-      case LoggerPrinter.debug:
-        _levelName = "debug";
-        break;
-      case LoggerPrinter.info:
-        _levelName = "info";
-        break;
-      case LoggerPrinter.warn:
-        _levelName = "warn";
-        break;
-      case LoggerPrinter.error:
-        _levelName = "error";
-        break;
-    }
-  }
+
 
   Widget _buildTextFiled() {
     return Container(
