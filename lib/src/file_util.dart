@@ -51,6 +51,9 @@ class LoggerUtil {
         traceString = StackTrace.current.toString().split("\n")[5];
         int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_1-9/:1-9]+.dart'));
         fileStr = traceString.substring(indexOfFileName);
+       var strList =  fileStr.split(" ");
+       fileStr = "${strList[0]}:${strList[1]})".replaceAll("packages/", "package:");
+
       }
     } catch (e) {
       // NoThing

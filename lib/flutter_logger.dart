@@ -148,6 +148,7 @@ class Logger {
   /// [levelError] 在 ide 中控制台 Error 日志的颜色
   /// [isShowTime] 在 ide 中控制台 打印日志的时候是否显示时间
   /// [isShowFile] 在 ide 中控制台 打印日志的时候是否显示文件名
+  /// [isShowNavigation] 在 ide 中控制台 打印日志的时候是否显示可以定位到打印的具体位置
   ///
   /// 因为 ansi 的颜色 和  16进制的具体颜色 我对应不上，所以添加在手机上时自己添加颜色
   ///
