@@ -54,7 +54,7 @@ Logger.init(
     levelDebug: 26,
     levelInfo: 28,
     levelWarn: 3,
-    levelError: 3,
+    levelError: 9,
     phoneVerbose: Colors.white54, // In your phone or web，, Set the color
     phoneDebug: Colors.blue,
     phoneInfo: Colors.green,

@@ -56,7 +56,7 @@ Logger.init(
     levelDebug: 26,
     levelInfo: 28,
     levelWarn: 3,
-    levelError: 3,
+    levelError: 9,
     phoneVerbose: Colors.white54, // 在你手机上设置颜色
     phoneDebug: Colors.blue,
     phoneInfo: Colors.green,

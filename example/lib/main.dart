@@ -12,7 +12,7 @@ void main() {
     levelDebug: 26,
     levelInfo: 28,
     levelWarn: 3,
-    levelError: 3,
+    levelError: 9,
     phoneVerbose: Colors.white54,
     phoneDebug: Colors.blue,
     phoneInfo: Colors.green,
