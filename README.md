@@ -43,6 +43,8 @@ Json  support (output will be in debug level)
 ```dart
 Logger.json(json);
 ```
+## jumps to the printed file details page
+![](https://github.com/niezhiyang/flutter_logger/blob/master/art/click.jpg)
 
 ## Advanced 
 ```dart
@@ -50,6 +52,7 @@ Logger.init(
     true,// isEnable ，if production ，please false
     isShowFile: true, // In the IDE, whether the file name is displayed
     isShowTime: true, // In the IDE, whether the time is displayed
+    isShowNavigation: true, // In the IDE, When clicked, it jumps to the printed file details page
     levelVerbose: 247, // In the IDE, Set the color
     levelDebug: 26,
     levelInfo: 28,

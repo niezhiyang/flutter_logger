@@ -5,6 +5,7 @@
 - 在flutter中，简单，漂亮，功能强大的日志打印工具，带有文件名字以及行号，并且可以定制自己的打印日志级别的颜色，按照android中的 [logger](https://github.com/orhanobut/logger) 设计的
 级别的颜色 在 ios 上无法修改。
 - 同时也可以在手机上输出打印日志，也可以按照日志级别过滤，或者是根据关键词过滤
+- 可以点击跳转到打印的具体文件，并且定位到行数
 ## 版本
 
 ```
@@ -44,6 +45,9 @@ Json  support (output will be in debug level)
 ```dart
 Logger.json(json);
 ```
+## 可以点击跳转到详情页
+
+![](https://github.com/niezhiyang/flutter_logger/blob/master/art/click.jpg)
 
 ## 更多用法 
 你可以定制打印级别的日志颜色，范围是0-255，具体的颜色值参考下面的图片
@@ -52,6 +56,7 @@ Logger.init(
     true,// 是否打印，在生产环境下，请填写 false
     isShowFile: true, // 在 IDE 中, 是否显示 文件名
     isShowTime: true, // 在 IDE 中, 是否显示 时间
+    isShowNavigation: true, // 在  IDE 中, 点击 跳转到写打印的地方
     levelVerbose: 247, // 在 IDE 中, 设置 对应级别的 颜色，请参考下图
     levelDebug: 26,
     levelInfo: 28,
