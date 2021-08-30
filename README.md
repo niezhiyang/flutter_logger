@@ -79,3 +79,7 @@ Turn off logging when production
 ```dart
 Logger.init(false);
 ```
+|  IOS   |  IOS   | Android| Web  |
+|  ----  |  ----  | ----  | ----  |
+| ide color  | no  | yes | yes |
+| phone color  | yes  | yes | yes |

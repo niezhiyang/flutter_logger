@@ -80,6 +80,10 @@ ConsoleOverlay.show(context);
 ```dart
 Logger.init(false);
 ```
+|  IOS   |  IOS   | Android| Web  |
+|  ----  |  ----  | ----  | ----  |
+| ide上颜色  | 不支持  | 支持 | 支持 |
+| 手机上颜色  | 支持  | 支持 | 支持 |
 ## 感谢
 [ansicolor-dart](https://github.com/google/ansicolor-dart)<br>
 [d_logger](https://github.com/liulianshanzhu/d_logger)<br>
