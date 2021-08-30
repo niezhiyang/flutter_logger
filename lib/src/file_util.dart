@@ -24,7 +24,7 @@ class LoggerUtil {
       } else {
         // web
         traceString = StackTrace.current.toString().split("\n")[5];
-        int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_]+.dart'));
+        int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_1-9]+.dart'));
         String fileInfo = traceString.substring(indexOfFileName);
         fileName = fileInfo.split(" ")[0];
         lineNumber = fileInfo.split(" ")[1].split(":")[0];
