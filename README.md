@@ -46,11 +46,21 @@ Logger.json(json);
 
 ## Advanced 
 ```dart
-Logger.levelVerbose = 247;
-Logger.levelDebug = 26;
-Logger.levelInfo = 28;
-Logger.levelWarn = 3;
-Logger.levelError = 9;
+Logger.init(
+    true,// isEnable ，if production ，please false
+    isShowFile: true, // In the IDE, whether the file name is displayed
+    isShowTime: true, // In the IDE, whether the time is displayed
+    levelVerbose: 247, // In the IDE, Set the color
+    levelDebug: 26,
+    levelInfo: 28,
+    levelWarn: 3,
+    levelError: 3,
+    phoneVerbose: Colors.white54, // In your phone or web，, Set the color
+    phoneDebug: Colors.blue,
+    phoneInfo: Colors.green,
+    phoneWarn: Colors.yellow,
+    phoneError: Colors.redAccent,
+  );
 ```
 You can change the color of level, and the value is in the range of 0-255. Please refer to the picture below for details<br>
 ![](https://github.com/niezhiyang/flutter_logger/blob/master/art/colors.png)
@@ -61,18 +71,11 @@ Logs can be printed on the phone or filtered by log level or keyword
 <img src="https://github.com/niezhiyang/flutter_logger/blob/master/art/logger_phone.gif" width="30%">
 
 ```dart
-Column(
-  children: [
-    Expanded(
-      // add ConsoleWidget 
-      child: ConsoleWidget(),
-    )
-  ],
-),
+ConsoleOverlay.show(context);
 ```
 ## Note
 
 Turn off logging when production
 ```dart
-Logger.enable = false;
+Logger.init(false);
 ```

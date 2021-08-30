@@ -48,11 +48,21 @@ Logger.json(json);
 ## 更多用法 
 你可以定制打印级别的日志颜色，范围是0-255，具体的颜色值参考下面的图片
 ```dart
-Logger.levelVerbose = 247;
-Logger.levelDebug = 26;
-Logger.levelInfo = 28;
-Logger.levelWarn = 3;
-Logger.levelError = 9;
+Logger.init(
+    true,// 是否打印，在生产环境下，请填写 false
+    isShowFile: true, // 在 IDE 中, 是否显示 文件名
+    isShowTime: true, // 在 IDE 中, 是否显示 时间
+    levelVerbose: 247, // 在 IDE 中, 设置 对应级别的 颜色，请参考下图
+    levelDebug: 26,
+    levelInfo: 28,
+    levelWarn: 3,
+    levelError: 3,
+    phoneVerbose: Colors.white54, // 在你手机上设置颜色
+    phoneDebug: Colors.blue,
+    phoneInfo: Colors.green,
+    phoneWarn: Colors.yellow,
+    phoneError: Colors.redAccent,
+  );
 ```
 ![](https://github.com/niezhiyang/flutter_logger/blob/master/art/colors.png)
 
@@ -60,34 +70,15 @@ Logger.levelError = 9;
 ## 手机上打印日志
 可以在手机上打印日志，也可以去通过日志级别去过滤，或者是关键词，ConsoleWidget就是打印的 Widget，可以拖动，可以放大
 ```dart
-Column(
-  children: [
-    Expanded(
-      // 把 ConsoleWidget 添加到你的  Widget 中，
-      child: ConsoleWidget(),
-    )
-  ],
-),
+ConsoleOverlay.show(context);
 ```
 <img src="https://github.com/niezhiyang/flutter_logger/blob/master/art/logger_phone.gif" width="30%">
 
-## 定制手机上打印的日志颜色
-```dart
-Logger.verboseColor = Colors.white54;
-Logger.debugColor = Colors.blue;
-Logger.infoColor = Colors.green;
-Logger.warnColor = Colors.yellow;
-Logger.errorColor = Colors.redAccent;
-```
-## 你也可以在手机上添加自己的日志
-```dart
-Logger.notifier.addLog(LogMode(logMessage: "你自己的日志",level: LoggerPrinter.error));
-```
 
 ## 注意
 当在生产环境，请关闭打印
 ```dart
-Logger.enable = false;
+Logger.init(false);
 ```
 ## 感谢
 [ansicolor-dart](https://github.com/google/ansicolor-dart)<br>
