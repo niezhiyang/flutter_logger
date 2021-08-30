@@ -49,8 +49,9 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
   static const int _logAll = 0;
   static const int _logOnlyFile = 1;
   static const int _logOnlyTime = 2;
+  static const double _logHeigh = 210;
   final SizedBox _divider = const SizedBox(
-    height: 5,
+    height: 1,
     width: 80,
     child: Divider(
       color: Colors.black26,
@@ -59,7 +60,6 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
 
   late ScrollController _controller;
 
-  late TextSelectionControls _selectionControl;
 
   late TextEditingController _textController;
   static const int _levelDefault = -1;
@@ -86,7 +86,6 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
   @override
   void initState() {
     _controller = ScrollController();
-    _selectionControl = MaterialTextSelectionControls();
     _textController = TextEditingController();
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
@@ -161,7 +160,7 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
       width: constraints.maxWidth,
       key: _globalForDrag,
       height:
-          _isLarge ? constraints.maxHeight + _mangerSize : 200 + _mangerSize,
+          _isLarge ? constraints.maxHeight + _mangerSize : _logHeigh + _mangerSize,
       // 因为滑动的时候 不知道为啥 说  IconButton 需要 Material，暂时不知道，所以加了 Scaffold
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -170,7 +169,7 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
             Column(
               children: [
                 Container(
-                  height: _isLarge ? constraints.maxHeight - 50 : 200,
+                  height: _isLarge ? constraints.maxHeight - 50 : _logHeigh,
                   color: Colors.black,
                   width: constraints.maxWidth,
                   child: ValueListenableBuilder<LogModeValue>(
@@ -284,7 +283,6 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
   }
 
 
-  void onPressed() {}
 
 
   final List<String> _logLevelFilter = [
@@ -303,7 +301,7 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
         builder: (_, model, child) {
           return  Positioned(
               left: 80,
-              bottom: _isLarge?70:0,
+              bottom: _isLarge?80:0,
               child: Offstage(
                 offstage: model.isVisible,
                 child: Card(
@@ -311,34 +309,32 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
                       borderRadius: BorderRadius.all(Radius.circular(5.0))),
                   elevation: 10,
                   color: Colors.white,
-                  child: Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: _logLevelFilter.map((value) {
-                        return Column(
-                          children: [
-                            Container(
-                              height: 30,
-                              child: MaterialButton(
-                                onPressed: () {
-                                  filterLog(value);
-                                },
-                                child: Text(
-                                  value,
-                                  style: TextStyle(
-                                      color: _levelName == value
-                                          ? Colors.blue
-                                          : Colors.black87,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400),
-                                ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: _logLevelFilter.map((value) {
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: 30,
+                            child: MaterialButton(
+                              onPressed: () {
+                                filterLog(value);
+                              },
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                    color: _levelName == value
+                                        ? Colors.blue
+                                        : Colors.black87,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400),
                               ),
                             ),
-                            Offstage(child: _divider, offstage: value.contains("取消")),
-                          ],
-                        );
-                      }).toList(),
-                    ),
+                          ),
+                          Offstage(child: _divider, offstage: value.contains("取消")),
+                        ],
+                      );
+                    }).toList(),
                   ),
                 ),
               ));
