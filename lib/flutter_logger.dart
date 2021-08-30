@@ -23,6 +23,14 @@ class Logger {
     return _isShowFile;
   }
 
+
+  /// 日志中是否含 点击 定位到文件的打印位置
+  static bool _isShowNavigation = true;
+
+  static bool get isShowNavigation {
+    return _isShowNavigation;
+  }
+
   /// 日志中是否含时间
   static bool _isShowTime = true;
 
@@ -153,6 +161,7 @@ class Logger {
     bool isEnable, {
     bool isShowTime = true,
     bool isShowFile = true,
+    bool isShowNavigation = true,
     int levelVerbose = 247,
     int levelDebug = 26,
     int levelInfo = 28,
@@ -167,6 +176,7 @@ class Logger {
     _enable = isEnable;
     _isShowTime = isShowTime;
     _isShowFile = isShowFile;
+    _isShowNavigation = isShowNavigation;
     _levelVerbose = levelVerbose;
     _levelDebug = levelDebug;
     _levelInfo = levelInfo;

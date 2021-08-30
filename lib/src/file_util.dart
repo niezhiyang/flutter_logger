@@ -24,7 +24,8 @@ class LoggerUtil {
       } else {
         // web
         traceString = StackTrace.current.toString().split("\n")[5];
-        int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_1-9]+.dart'));
+        int indexOfFileName =
+            traceString.indexOf(RegExp(r'[A-Za-z_1-9]+.dart'));
         String fileInfo = traceString.substring(indexOfFileName);
         fileName = fileInfo.split(" ")[0];
         lineNumber = fileInfo.split(" ")[1].split(":")[0];
@@ -38,7 +39,24 @@ class LoggerUtil {
     return fileStr;
   }
 
-
+  static String getNavigationFile() {
+    String fileStr = "";
+    try {
+      String traceString = StackTrace.current.toString().split("\n")[4];
+      int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_1-9/:1-9]+.dart'));
+      if (traceString.contains("#")) {
+        fileStr = traceString.substring(indexOfFileName);
+      } else {
+        // web
+        traceString = StackTrace.current.toString().split("\n")[5];
+        int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_1-9/:1-9]+.dart'));
+        fileStr = traceString.substring(indexOfFileName);
+      }
+    } catch (e) {
+      // NoThing
+    }
+    return fileStr;
+  }
 
   ///json字符串格式化
   static String jsonFormat(String json) {
@@ -134,28 +152,29 @@ class LoggerUtil {
     }
     return tab.toString();
   }
-  static String format(DateTime date,{bool haveDay = false}) {
+
+  static String format(DateTime date, {bool haveDay = false}) {
     StringBuffer buffer = StringBuffer();
-    if(haveDay){
-      var day =  date.toString().split(" ")[0];
+    if (haveDay) {
+      var day = date.toString().split(" ")[0];
       buffer.write(day);
       buffer.write(" ");
     }
-    var time =  date.toString().split(" ")[1].split(".")[0];
+    var time = date.toString().split(" ")[1].split(".")[0];
 
     buffer.write(time);
     return buffer.toString();
   }
 
-  static String formatDate(DateTime? date,{bool haveDay = true}) {
+  static String formatDate(DateTime? date, {bool haveDay = true}) {
     StringBuffer buffer = StringBuffer();
     try {
-      if(haveDay){
-            var day =  date.toString().split(" ")[0];
-            buffer.write(day);
-            buffer.write(" ");
-          }
-      var time =  date.toString().split(" ")[1].split(".")[0];
+      if (haveDay) {
+        var day = date.toString().split(" ")[0];
+        buffer.write(day);
+        buffer.write(" ");
+      }
+      var time = date.toString().split(" ")[1].split(".")[0];
 
       buffer.write(time);
     } catch (e) {

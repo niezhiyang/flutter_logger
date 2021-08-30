@@ -24,6 +24,10 @@ class LoggerPrinter extends Printer {
   static const String _divider =
       "────────────────────────────────────────────────────────";
 
+  /// 当需要点击调转到某个文件的时候添加
+  static const String _singleDivider =
+      "┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄";
+
   //  暂时发现 在 macOs 上 ，应用内，上面的几个都 识别不了
   static const String _verticalLineMacOs = '| ';
   static const String _dividerMacOs =
@@ -80,7 +84,8 @@ class LoggerPrinter extends Printer {
     String fileName = LoggerUtil.getFileInfo();
     DateTime dateTime = DateTime.now();
     String time = LoggerUtil.formatDate(dateTime);
-    String prefix = "${getLevelFirst(level)}${Logger.isShowTime ? dateTime : ""} ${Logger.isShowFile ? fileName : ""} : ${tag ?? ""}";
+    String prefix =
+        "${getLevelFirst(level)}${Logger.isShowTime ? dateTime : ""} ${Logger.isShowFile ? fileName : ""} : ${tag ?? ""}";
     String prefixForPhone = "$time $fileName : ${tag ?? ""}";
 
     if (defaultTargetPlatform == TargetPlatform.iOS) {
@@ -92,6 +97,11 @@ class LoggerPrinter extends Printer {
     StringBuffer logMessage = StringBuffer();
 
     print(pen.call("$prefix $_topBorder"));
+
+    if (Logger.isShowNavigation) {
+      print("${pen.call("$prefix $_verticalLine")} ${LoggerUtil.getNavigationFile()} ");
+      print(pen.call("$prefix $_verticalLine$_singleDivider$_singleDivider"));
+    }
 
     if (defaultTargetPlatform == TargetPlatform.macOS ||
         defaultTargetPlatform == TargetPlatform.windows) {

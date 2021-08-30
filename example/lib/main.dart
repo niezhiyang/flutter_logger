@@ -8,6 +8,7 @@ void main() {
     true,
     isShowFile: true,
     isShowTime: true,
+    isShowNavigation: true,
     levelVerbose: 247,
     levelDebug: 26,
     levelInfo: 28,
