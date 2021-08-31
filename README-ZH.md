@@ -75,7 +75,10 @@ Logger.init(
 ## 手机上打印日志
 可以在手机上打印日志，也可以去通过日志级别去过滤，或者是关键词，ConsoleWidget就是打印的 Widget，可以拖动，可以放大
 ```dart
+// 添加显示日志的 Overlay
 ConsoleOverlay.show(context);
+// remove 日志的 Overlay
+ConsoleOverlay.remove();
 ```
 <img src="https://github.com/niezhiyang/flutter_logger/blob/master/art/logger_phone.gif" width="30%">
 

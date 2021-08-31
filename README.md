@@ -74,7 +74,10 @@ Logs can be printed on the phone or filtered by log level or keyword
 <img src="https://github.com/niezhiyang/flutter_logger/blob/master/art/logger_phone.gif" width="30%">
 
 ```dart
+// add Overlay
 ConsoleOverlay.show(context);
+// remoove
+ConsoleOverlay.remove();
 ```
 ## Note
 
