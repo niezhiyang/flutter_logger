@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'logger_printer.dart';
 import 'printer.dart';
-import 'log_mode.dart';
+import 'mode/log_mode.dart';
 
 class Logger {
   static LogValueNotifier notifier = LogValueNotifier();

@@ -1,13 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_easylogger/log_mode.dart';
+import 'package:flutter_easylogger/src/mode/log_mode.dart';
 
 import 'flutter_logger.dart';
 import 'printer.dart';
-import 'src/ansicolor.dart';
-import 'src/console_util.dart';
-import 'src/file_util.dart';
+import 'ansi/ansicolor.dart';
+import 'util/code_util.dart';
+import 'util/console_util.dart';
+import 'util/file_util.dart';
 
 class LoggerPrinter extends Printer {
   static const int verbose = 1;
@@ -141,6 +142,7 @@ class LoggerPrinter extends Printer {
       fileName: fileName,
       time: time,
       logMessage: logMessage.toString(),
+      fileUri: LoggerUtil.getFileUri()
     );
     Logger.notifier.addLog(mode);
   }

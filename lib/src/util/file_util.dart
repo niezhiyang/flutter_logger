@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
+import 'dart:isolate';
 
 import '../flutter_logger.dart';
-import '../log_mode.dart';
+import '../mode/log_mode.dart';
 
 class LoggerUtil {
   /// 拿到当前文件名字 和 行号
@@ -25,7 +27,7 @@ class LoggerUtil {
         // web
         traceString = StackTrace.current.toString().split("\n")[5];
         int indexOfFileName =
-            traceString.indexOf(RegExp(r'[A-Za-z_1-9]+.dart'));
+        traceString.indexOf(RegExp(r'[A-Za-z_1-9]+.dart'));
         String fileInfo = traceString.substring(indexOfFileName);
         fileName = fileInfo.split(" ")[0];
         lineNumber = fileInfo.split(" ")[1].split(":")[0];
@@ -36,6 +38,7 @@ class LoggerUtil {
       // NoThing
     }
 
+
     return fileStr;
   }
 
@@ -43,18 +46,46 @@ class LoggerUtil {
     String fileStr = "";
     try {
       String traceString = StackTrace.current.toString().split("\n")[4];
-      int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_1-9/:1-9]+.dart'));
+      int indexOfFileName = traceString.indexOf(
+          RegExp(r'[A-Za-z_1-9/:1-9]+.dart'));
       if (traceString.contains("#")) {
         fileStr = traceString.substring(indexOfFileName);
       } else {
         // web
         traceString = StackTrace.current.toString().split("\n")[5];
-        int indexOfFileName = traceString.indexOf(RegExp(r'[A-Za-z_1-9/:1-9]+.dart'));
+        int indexOfFileName = traceString.indexOf(
+            RegExp(r'[A-Za-z_1-9/:1-9]+.dart'));
         fileStr = traceString.substring(indexOfFileName);
-       var strList =  fileStr.split(" ");
-       fileStr = "${strList[0]}:${strList[1]})".replaceAll("packages/", "package:");
-
+        var strList = fileStr.split(" ");
+        fileStr =
+            "${strList[0]}:${strList[1]})".replaceAll("packages/", "package:");
       }
+    } catch (e) {
+      // NoThing
+    }
+    return fileStr;
+  }
+
+  static String getFileUri() {
+    String fileStr = "";
+    try {
+      String traceString = StackTrace.current.toString().split("\n")[4];
+      int indexOfFileName = traceString.indexOf(
+          RegExp(r'[A-Za-z_1-9/:1-9]+.dart'));
+      if (traceString.contains("#")) {
+        fileStr = traceString.substring(indexOfFileName);
+      } else {
+        // web
+        traceString = StackTrace.current.toString().split("\n")[5];
+        int indexOfFileName = traceString.indexOf(
+            RegExp(r'[A-Za-z_1-9/:1-9]+.dart'));
+        fileStr = traceString.substring(indexOfFileName);
+        var strList = fileStr.split(" ");
+        fileStr =
+            "${strList[0]}:${strList[1]})".replaceAll("packages/", "package:");
+      }
+
+      fileStr =  "${fileStr.split(":")[0]}:${fileStr.split(":")[1]}";
     } catch (e) {
       // NoThing
     }
@@ -185,4 +216,7 @@ class LoggerUtil {
     }
     return buffer.toString();
   }
+
+
+
 }

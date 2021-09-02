@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easylogger/console_overlay.dart';
-import 'package:flutter_easylogger/console_widget.dart';
-import 'package:flutter_easylogger/flutter_logger.dart';
+import 'package:flutter_easylogger/flutter_easylogger.dart';
 
 void main() {
   Logger.init(
@@ -35,6 +33,7 @@ class MyApp extends StatelessWidget {
     var json =
         "{\"name\":\"tom\",\"age\":\"38\",\"son\":{\"name\":\"jerry\",\"age\":\"18\",\"grandson\":{\"name\":\"lily\",\"age\":\"8\"}}}";
     Logger.json(json);
+
 
 
   }
@@ -79,7 +78,7 @@ class _DemoState extends State<Demo> {
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Center(child: FloatingActionButton(onPressed: (){ ConsoleOverlay.remove();},),);
   }
 }
 

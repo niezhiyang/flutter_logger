@@ -1,4 +1,4 @@
-import 'package:flutter_easylogger/flutter_logger.dart';
+import 'package:flutter_easylogger/src/flutter_logger.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

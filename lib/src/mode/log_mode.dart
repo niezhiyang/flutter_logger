@@ -9,8 +9,9 @@ class LogMode {
   int? level;
   String? time;
   String? fileName;
+  String? fileUri;
 
-  LogMode({this.logMessage, this.level, this.time, this.fileName});
+  LogMode({this.logMessage, this.level, this.time, this.fileName,this.fileUri});
 }
 
 class LogValueNotifier extends ValueNotifier<LogModeValue> {

@@ -1,15 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_easylogger/src/code_page.dart';
 
-import 'console_widget.dart';
 import 'flutter_logger.dart';
-import 'log_mode.dart';
+import 'mode/log_mode.dart';
 import 'logger_printer.dart';
-import 'src/console_util.dart';
-import 'src/filter_menu_mode.dart';
+import 'util/console_util.dart';
+import 'mode/filter_menu_mode.dart';
 
 class ConsoleOverlay {
   static OverlayEntry? _entry;
@@ -32,8 +31,11 @@ class ConsoleOverlay {
   }
 
   static remove() {
+    if(isShow){
+      _entry?.remove();
+    }
     isShow = false;
-    _entry?.remove();
+
   }
 }
 
@@ -259,7 +261,12 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
                 decoration: TextDecoration.none,
                 fontWeight: FontWeight.w400);
             String log = _getLog(logMode);
-            return Text(log, style: _logStyle);
+            return InkWell(child: Text(log, style: _logStyle),onTap: (){
+
+              Navigator.push(context, MaterialPageRoute(builder: (context){
+                return CodePage(fileUri:logMode.fileUri);
+              }),);
+            },);
           },
           itemCount: fiterList.length,
         ),
@@ -397,7 +404,7 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
   Widget _buildTextFiled() {
     return Container(
       margin: const EdgeInsets.all(5),
-      padding: EdgeInsets.only(left: 15),
+      padding: const EdgeInsets.only(left: 15),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
