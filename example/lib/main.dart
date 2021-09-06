@@ -78,7 +78,7 @@ class _DemoState extends State<Demo> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: FloatingActionButton(onPressed: (){ ConsoleOverlay.remove();},),);
+    return Center();
   }
 }
 

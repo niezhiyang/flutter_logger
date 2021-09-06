@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easylogger/src/syntax_highlighter.dart';
 
@@ -7,9 +8,10 @@ class CodeOverlay {
   static OverlayEntry? _entry;
   static bool isShow = false;
 
+  /// web 不支持
   static void show(BuildContext context, String? fileUri) {
     if (fileUri != null) {
-      if (!isShow) {
+      if (!isShow && !kIsWeb) {
         _entry = OverlayEntry(builder: (_) {
           return Scaffold(
               appBar: AppBar(
