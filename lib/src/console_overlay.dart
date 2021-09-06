@@ -2,9 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_easylogger/src/code_page.dart';
+import 'package:flutter_easylogger/src/code_overlay.dart';
 
 import 'flutter_logger.dart';
+import 'mode/code_show_mode.dart';
 import 'mode/log_mode.dart';
 import 'logger_printer.dart';
 import 'util/console_util.dart';
@@ -31,11 +32,10 @@ class ConsoleOverlay {
   }
 
   static remove() {
-    if(isShow){
+    if (isShow) {
       _entry?.remove();
     }
     isShow = false;
-
   }
 }
 
@@ -47,7 +47,9 @@ class ConsoleOverlayWidget extends StatefulWidget {
 }
 
 class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
-   ValueNotifier<FilterMenu> _menuValue = ValueNotifier(FilterMenu(10, true));
+  final ValueNotifier<FilterMenu> _menuValue =
+      ValueNotifier(FilterMenu(10, true));
+  final CodeValueNotifier _codeValueNotifier = CodeValueNotifier();
   static const int _logAll = 0;
   static const int _logOnlyFile = 1;
   static const int _logOnlyTime = 2;
@@ -61,7 +63,6 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
   );
 
   late ScrollController _controller;
-
 
   late TextEditingController _textController;
   static const int _levelDefault = -1;
@@ -133,7 +134,7 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
                 },
               ),
             ),
-          )
+          ),
         ],
       );
     });
@@ -161,8 +162,9 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
     return Container(
       width: constraints.maxWidth,
       key: _globalForDrag,
-      height:
-          _isLarge ? constraints.maxHeight + _mangerSize : _logHeigh + _mangerSize,
+      height: _isLarge
+          ? constraints.maxHeight + _mangerSize
+          : _logHeigh + _mangerSize,
       // 因为滑动的时候 不知道为啥 说  IconButton 需要 Material，暂时不知道，所以加了 Scaffold
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -261,12 +263,12 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
                 decoration: TextDecoration.none,
                 fontWeight: FontWeight.w400);
             String log = _getLog(logMode);
-            return InkWell(child: Text(log, style: _logStyle),onTap: (){
-
-              Navigator.push(context, MaterialPageRoute(builder: (context){
-                return CodePage(fileUri:logMode.fileUri);
-              }),);
-            },);
+            return InkWell(
+              child: Text(log, style: _logStyle),
+              onTap: () {
+               CodeOverlay.show(context, logMode.fileUri);
+              },
+            );
           },
           itemCount: fiterList.length,
         ),
@@ -289,9 +291,6 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
     }
   }
 
-
-
-
   final List<String> _logLevelFilter = [
     "all",
     "verbose",
@@ -306,9 +305,9 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
     return ValueListenableBuilder<FilterMenu>(
         valueListenable: _menuValue,
         builder: (_, model, child) {
-          return  Positioned(
+          return Positioned(
               left: 80,
-              bottom: _isLarge?80:0,
+              bottom: _isLarge ? 80 : 0,
               child: Offstage(
                 offstage: model.isVisible,
                 child: Card(
@@ -338,7 +337,55 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
                               ),
                             ),
                           ),
-                          Offstage(child: _divider, offstage: value.contains("取消")),
+                          Offstage(
+                              child: _divider, offstage: value.contains("取消")),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ));
+        });
+  }
+
+  Widget _codeWidget() {
+    return ValueListenableBuilder<FilterMenu>(
+        valueListenable: _menuValue,
+        builder: (_, model, child) {
+          return Positioned(
+              left: 80,
+              bottom: _isLarge ? 80 : 0,
+              child: Offstage(
+                offstage: model.isVisible,
+                child: Card(
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  elevation: 10,
+                  color: Colors.white,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: _logLevelFilter.map((value) {
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: 30,
+                            child: MaterialButton(
+                              onPressed: () {
+                                filterLog(value);
+                              },
+                              child: Text(
+                                value,
+                                style: TextStyle(
+                                    color: _levelName == value
+                                        ? Colors.blue
+                                        : Colors.black87,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w400),
+                              ),
+                            ),
+                          ),
+                          Offstage(
+                              child: _divider, offstage: value.contains("取消")),
                         ],
                       );
                     }).toList(),
@@ -350,26 +397,25 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
 
   /// 过滤log
   void filterLog(String buttonValue) {
-
-    if(buttonValue != "取消"){
+    if (buttonValue != "取消") {
       if (mounted) {
         _closeKeyBoard();
         setState(() {
           switch (buttonValue) {
             case "all":
-              _logLevel =  _levelDefault;
+              _logLevel = _levelDefault;
               break;
             case "verbose":
-              _logLevel =  LoggerPrinter.verbose;
+              _logLevel = LoggerPrinter.verbose;
               break;
             case "debug":
-              _logLevel =  LoggerPrinter.debug;
+              _logLevel = LoggerPrinter.debug;
               break;
             case "info":
-              _logLevel =  LoggerPrinter.info;
+              _logLevel = LoggerPrinter.info;
               break;
             case "warn":
-              _logLevel =  LoggerPrinter.warn;
+              _logLevel = LoggerPrinter.warn;
               break;
             case "error":
               _logLevel = LoggerPrinter.error;
@@ -382,7 +428,6 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
 
     _menuValue.value.isVisible = true;
     _menuValue.notifyListeners();
-
   }
 
   /// 更改大小
@@ -398,8 +443,6 @@ class _ConsoleOverlayWidgetState extends State<ConsoleOverlayWidget> {
       });
     }
   }
-
-
 
   Widget _buildTextFiled() {
     return Container(

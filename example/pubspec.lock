@@ -62,6 +62,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_autosize_screen:
+    dependency: "direct main"
+    description:
+      name: flutter_autosize_screen
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.1"
   flutter_easylogger:
     dependency: "direct main"
     description:
